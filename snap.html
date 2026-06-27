@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Garnavya — Snap Mode</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-a:#faf6ee;
+    --bg-b:#f1e6d2;
+    --paper:#fffdf8;
+    --glass:rgba(255,251,243,0.58);
+    --glass-edge:rgba(196,138,69,0.28);
+    --amber:#c4862e;
+    --amber-deep:#8a5a1f;
+    --amber-soft:#e3b06b;
+    --ink:#2b2114;
+    --ink-dim:#6b5d47;
+    --ink-faint:#9c8e76;
+    --hairline:rgba(43,33,20,0.10);
+    --font-display:"Fraunces", serif;
+    --font-body:"Inter", sans-serif;
+    --font-mono:"JetBrains Mono", monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:
+      radial-gradient(ellipse 1200px 800px at 50% -5%, rgba(227,176,107,0.30), transparent 60%),
+      radial-gradient(ellipse 900px 700px at 100% 100%, rgba(196,138,69,0.10), transparent 55%),
+      linear-gradient(165deg, var(--bg-a) 0%, var(--bg-b) 100%);
+    color:var(--ink);
+    font-family:var(--font-body);
+    overflow-x:hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    opacity:0.05; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  #topbar{
+    position:fixed; top:0; left:0; right:0;
+    z-index:90;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px;
+    background:rgba(250,246,238,0.62);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--hairline);
+  }
+  .brand{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:600;
+    font-size:16px;
+    display:flex; align-items:center; gap:9px;
+    color:var(--ink);
+  }
+  .brand .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 10px rgba(196,138,69,0.5); }
+
+  #modeToggle{
+    display:flex; align-items:center; gap:0;
+    background:rgba(43,33,20,0.06);
+    border:1px solid var(--hairline);
+    border-radius:20px;
+    padding:3px;
+    font-family:var(--font-mono);
+  }
+  #modeToggle a{
+    text-decoration:none; font-size:11px; letter-spacing:0.1em;
+    padding:7px 16px; border-radius:16px;
+    color:var(--ink-dim);
+    transition:all 0.25s ease;
+  }
+  #modeToggle a.active{ background:var(--amber); color:#fffaf0; font-weight:700; }
+  #modeToggle a:hover:not(.active){ color:var(--ink); }
+
+  main{ position:relative; z-index:2; }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.16em;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:16px;
+  }
+  .placeholder-tag{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:9px;
+    letter-spacing:0.06em;
+    color:#fffaf0;
+    background:var(--amber);
+    padding:2px 7px;
+    border-radius:3px;
+    margin-left:8px;
+    vertical-align:middle;
+    text-transform:uppercase;
+  }
+
+  /* ===================== APERTURE OVERLAY — real iris diaphragm =====================
+     8 blades, each a curved quadrilateral pivoting from a point on the rim,
+     built in SVG for precise blade geometry. JS rotates each blade about its
+     own pivot to sweep the iris from fully open (retracted, invisible) to
+     fully closed (blades overlap, sealing the screen) and back. */
+  #aperture-overlay{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    pointer-events:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+  }
+  #aperture-overlay.iris-visible{ opacity:1; }
+  #aperture-overlay svg{
+    width:100%; height:100%;
+    display:block;
+  }
+  .iris-blade{
+    fill:#241a0d;
+    stroke:rgba(227,176,107,0.35);
+    stroke-width:0.6;
+  }
+  .iris-backdrop{
+    fill:#1c1408;
+    opacity:0;
+  }
+  #aperture-overlay.iris-visible .iris-backdrop{
+    opacity:1;
+    transition:opacity 0.15s ease;
+  }
+  .iris-rim{
+    fill:none;
+    stroke:rgba(227,176,107,0.5);
+    stroke-width:1.4;
+    opacity:0;
+  }
+  #aperture-overlay.iris-visible .iris-rim{ opacity:0.7; transition:opacity 0.2s ease; }
+
+  /* ===================== HERO ===================== */
+  #hero{
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    padding:14vh 8vw 8vh;
+    text-align:center;
+  }
+
+  .silhouette-wrap{ position:relative; width:260px; height:320px; margin:0 auto 28px; }
+  .sil-glow{
+    position:absolute; left:50%; top:55%;
+    width:230px; height:230px; margin-left:-115px; margin-top:-115px;
+    background:radial-gradient(circle, rgba(196,138,69,0.20), transparent 70%);
+    border-radius:50%; z-index:0;
+  }
+  .silhouette{ width:100%; height:100%; position:relative; }
+  .sil-body{
+    position:absolute; left:50%; bottom:0; width:142px; height:218px; margin-left:-71px;
+    background:linear-gradient(180deg, #d8c5a3, #a98c5e);
+    border-radius:70px 70px 16px 16px; z-index:1;
+    box-shadow:inset 0 -20px 40px rgba(43,33,20,0.15);
+  }
+  .sil-head{
+    position:absolute; left:50%; bottom:206px; width:74px; height:80px; margin-left:-37px;
+    background:linear-gradient(180deg, #d8c5a3, #b89c70);
+    border-radius:50% 50% 46% 46%; z-index:1;
+  }
+  .sil-arm-l{ position:absolute; left:50%; bottom:122px; width:90px; height:44px; margin-left:-112px; background:#c2a878; border-radius:38px; transform:rotate(-18deg); z-index:2; }
+  .sil-arm-r{ position:absolute; left:50%; bottom:122px; width:90px; height:44px; margin-left:22px; background:#c2a878; border-radius:38px; transform:rotate(18deg); z-index:2; }
+  .sil-camera{
+    position:absolute; left:50%; bottom:140px; width:60px; height:40px; margin-left:-30px;
+    background:linear-gradient(180deg, #2b2114, #161009);
+    border:1px solid var(--amber-deep); border-radius:6px; z-index:3;
+    box-shadow:0 0 22px rgba(196,138,69,0.25);
+  }
+  .sil-camera::before{
+    content:""; position:absolute; left:50%; top:50%; width:20px; height:20px; margin-left:-10px; margin-top:-10px;
+    border-radius:50%; background:#100c08; border:2px solid var(--amber);
+  }
+  .sil-camera::after{ content:""; position:absolute; top:-8px; left:13px; width:18px; height:10px; background:#1c140c; border:1px solid var(--amber-deep); border-radius:2px; }
+
+  .placeholder-flag{
+    position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
+    font-family:var(--font-mono); font-size:9px; letter-spacing:0.08em; color:#fffaf0;
+    background:var(--amber); padding:3px 10px; border-radius:3px; white-space:nowrap; text-transform:uppercase;
+  }
+
+  h1{ font-family:var(--font-display); font-weight:500; font-size:clamp(38px, 6.6vw, 76px); line-height:1.05; color:var(--ink); }
+  h1 .accent{ font-style:italic; color:var(--amber); }
+
+  .lede{ margin:20px auto 0; font-size:16.5px; line-height:1.65; color:var(--ink-dim); max-width:520px; }
+
+  .scroll-cue{
+    margin-top:48px; font-family:var(--font-mono); font-size:11px; color:var(--ink-faint);
+    letter-spacing:0.1em; display:flex; align-items:center; justify-content:center; gap:9px;
+  }
+  .scroll-cue .chev{ color:var(--amber); display:inline-block; animation:bob 1.8s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(5px); } }
+
+  /* ===================== STORY SECTIONS ===================== */
+  .story-section{
+    position:relative;
+    padding:14vh 8vw;
+    display:flex;
+    justify-content:center;
+  }
+  .story-grid{
+    width:100%;
+    max-width:1040px;
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    gap:60px;
+    align-items:center;
+  }
+  .story-grid.reverse{ grid-template-columns:1.15fr 0.85fr; }
+  .story-grid.reverse .story-visual{ order:2; }
+  .story-grid.reverse .story-text{ order:1; }
+
+  .story-visual{
+    position:relative;
+    aspect-ratio:4/5;
+    border-radius:14px;
+    background:linear-gradient(150deg, #e9d8b8, #c9ad7c);
+    border:1px solid var(--glass-edge);
+    box-shadow:0 30px 60px -20px rgba(138,90,31,0.25);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .story-visual .sv-frame{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:rgba(43,33,20,0.45);
+    letter-spacing:0.1em;
+    text-align:center;
+  }
+  .story-visual .sv-frame .num{ font-size:34px; display:block; font-family:var(--font-display); font-style:italic; color:rgba(43,33,20,0.3); margin-bottom:6px; }
+
+  .story-text h2{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:clamp(28px, 3.6vw, 42px);
+    line-height:1.12;
+    margin-bottom:20px;
+    color:var(--ink);
+  }
+  .story-text p{
+    font-size:15px;
+    line-height:1.75;
+    color:var(--ink-dim);
+    margin-bottom:16px;
+    max-width:460px;
+  }
+  .story-text .cred-list{ margin-top:24px; display:flex; flex-direction:column; gap:10px; }
+  .story-text .cred-item{ display:flex; align-items:baseline; gap:10px; font-family:var(--font-mono); font-size:12px; }
+  .story-text .cred-item .ct{ color:var(--amber); font-weight:600; min-width:120px; }
+  .story-text .cred-item .cd{ color:var(--ink-dim); }
+
+  .achievement-grid{ margin-top:26px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .achievement-chip{ border:1px solid var(--hairline); border-radius:8px; padding:14px 16px; background:rgba(255,255,255,0.4); }
+  .achievement-chip .ac-y{ font-family:var(--font-mono); font-size:10px; color:var(--amber); letter-spacing:0.06em; }
+  .achievement-chip .ac-t{ font-size:13px; font-weight:600; margin-top:4px; color:var(--ink); }
+
+  /* ===================== CAMERA + ORBIT STAGE ===================== */
+  #camerastage{ position:relative; min-height:280vh; }
+  #stage-sticky{
+    position:sticky; top:0; height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+
+  #camera-orbit-scene{
+    position:relative;
+    width:min(94vmin, 980px);
+    height:min(94vmin, 980px);
+    z-index:10;
+    perspective:1400px;
+  }
+
+  #camera-mount{ position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d; }
+  #camera-3d{
+    position:absolute; left:50%; top:50%;
+    width:240px; height:160px; margin-left:-120px; margin-top:-80px;
+    transform-style:preserve-3d; cursor:grab; will-change:transform;
+  }
+  #camera-3d:active{ cursor:grabbing; }
+
+  .cam-face{
+    position:absolute; inset:0; border-radius:10px;
+    background:linear-gradient(155deg, #2b231a 0%, #161009 60%, #0c0804 100%);
+    border:1px solid rgba(196,138,69,0.25);
+    box-shadow:inset 0 2px 4px rgba(255,255,255,0.08), inset 0 -10px 20px rgba(0,0,0,0.5);
+    backface-visibility:hidden;
+  }
+  .cam-front{ transform:translateZ(38px); }
+  .cam-back{ transform:translateZ(-38px) rotateY(180deg); }
+  .cam-left{ width:76px; left:50%; margin-left:-120px; transform:rotateY(-90deg) translateZ(38px); border-radius:10px 0 0 10px;}
+  .cam-right{ width:76px; left:50%; margin-left:44px; transform:rotateY(90deg) translateZ(38px); border-radius:0 10px 10px 0;}
+  .cam-top{ height:76px; top:50%; margin-top:-120px; transform:rotateX(90deg) translateZ(38px); border-radius:10px 10px 0 0;}
+  .cam-bottom{ height:76px; top:50%; margin-top:44px; transform:rotateX(-90deg) translateZ(38px); border-radius:0 0 10px 10px;}
+
+  .cam-lens{
+    position:absolute; left:50%; top:54%; width:92px; height:92px; margin-left:-46px; margin-top:-46px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #3a3024, #0a0704 75%);
+    border:3px solid #1a140c;
+    box-shadow:0 0 0 2px var(--amber-deep), inset 0 0 18px rgba(0,0,0,0.8), 0 10px 26px rgba(0,0,0,0.5);
+    transform:translateZ(39px);
+  }
+  .cam-lens::before{ content:""; position:absolute; inset:14px; border-radius:50%; background:radial-gradient(circle at 40% 35%, rgba(196,138,69,0.5), #050403 70%); }
+  .cam-lens::after{ content:""; position:absolute; left:50%; top:50%; width:6px; height:6px; margin-left:-3px; margin-top:-3px; border-radius:50%; background:#000; box-shadow:0 0 8px 2px rgba(255,255,255,0.18); }
+  .cam-grip{ position:absolute; right:6px; top:6px; bottom:6px; width:34px; border-radius:8px; background:linear-gradient(160deg, #241b12, #0c0804); transform:translateZ(39px); }
+  .cam-flash{ position:absolute; left:18px; top:8px; width:30px; height:14px; border-radius:3px; background:#0a0704; border:1px solid var(--amber-deep); transform:translateZ(39px); }
+  .cam-brand{ position:absolute; left:18px; top:30px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.08em; color:var(--amber-soft); transform:translateZ(39px); }
+
+  #camera-label{ position:absolute; bottom:5%; left:50%; transform:translateX(-50%); text-align:center; z-index:11; pointer-events:none; }
+  #camera-label .cl-name{ font-family:var(--font-display); font-style:italic; font-size:19px; color:var(--ink); background:rgba(255,253,248,0.7); padding:4px 14px; border-radius:20px; backdrop-filter:blur(6px); }
+  #camera-label .cl-sub{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; color:var(--ink-dim); margin-top:6px; text-transform:uppercase; }
+
+  .drag-hint{
+    position:absolute; top:6%; left:50%; transform:translateX(-50%);
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; color:var(--ink-dim);
+    text-transform:uppercase; z-index:11; opacity:0.85; pointer-events:none; transition:opacity 0.4s;
+    background:rgba(255,253,248,0.6); padding:5px 12px; border-radius:14px;
+  }
+
+  .orbit-photo{
+    position:absolute; left:50%; top:50%;
+    width:80px; height:80px; margin-left:-40px; margin-top:-40px;
+    border-radius:8px;
+    border:2px solid var(--glass-edge);
+    box-shadow:0 14px 30px rgba(138,90,31,0.22), 0 0 0 1px rgba(255,255,255,0.4);
+    cursor:pointer;
+    background-size:cover; background-position:center;
+    z-index:15;
+    transition:border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
+  .orbit-photo:hover, .orbit-photo.active{
+    border-color:var(--amber);
+    box-shadow:0 18px 36px rgba(138,90,31,0.3), 0 0 22px rgba(196,138,69,0.3);
+    transform:scale(1.06);
+  }
+  .orbit-photo .ph-frame-no{
+    position:absolute; top:-9px; left:-9px; width:20px; height:20px; border-radius:50%;
+    background:var(--paper); border:1px solid var(--amber-deep);
+    font-family:var(--font-mono); font-size:9px; color:var(--amber); display:flex; align-items:center; justify-content:center;
+  }
+
+  .exif-card{
+    position:absolute; width:230px; padding:18px 20px; border-radius:10px;
+    background:var(--glass); border:1px solid var(--glass-edge);
+    backdrop-filter:blur(18px) saturate(140%);
+    box-shadow:0 30px 60px -20px rgba(138,90,31,0.3);
+    z-index:25; opacity:0; transform:scale(0.92) translateY(8px); pointer-events:none;
+    transition:opacity 0.3s ease, transform 0.3s ease;
+  }
+  .exif-card.visible{ opacity:1; transform:scale(1) translateY(0); pointer-events:auto; }
+  .exif-card .ec-title{ font-family:var(--font-display); font-style:italic; font-size:16px; color:var(--ink); margin-bottom:10px; }
+  .exif-card .ec-row{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:10.5px; padding:5px 0; border-bottom:1px solid var(--hairline); }
+  .exif-card .ec-row:last-child{ border-bottom:none; }
+  .exif-card .ec-row .ec-k{ color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.05em; }
+  .exif-card .ec-row .ec-v{ color:var(--amber-deep); text-align:right; }
+  .exif-card .ec-story{ margin-top:10px; font-size:11.5px; color:var(--ink-dim); line-height:1.55; font-family:var(--font-body); }
+  .exif-card .ec-close{ position:absolute; top:10px; right:12px; font-family:var(--font-mono); font-size:13px; color:var(--ink-faint); cursor:pointer; background:none; border:none; }
+  .exif-card .ec-close:hover{ color:var(--amber); }
+
+  /* ===================== GALLERY ===================== */
+  #gallery{ position:relative; padding:12vh 8vw 8vh; }
+  .gallery-head{ max-width:1040px; margin:0 auto 36px; text-align:center; }
+  .gallery-head h2{ font-family:var(--font-display); font-weight:500; font-size:clamp(28px,3.8vw,44px); }
+
+  .gallery-filters{ max-width:1040px; margin:30px auto 0; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .filter-chip{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.04em;
+    padding:7px 14px; border-radius:16px;
+    border:1px solid var(--hairline);
+    background:rgba(255,255,255,0.45);
+    color:var(--ink-dim);
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .filter-chip:hover{ border-color:var(--amber-soft); color:var(--ink); }
+  .filter-chip.active{ background:var(--amber); border-color:var(--amber); color:#fffaf0; font-weight:600; }
+
+  .gallery-search{
+    width:100%; max-width:280px;
+    font-family:var(--font-mono); font-size:12px;
+    padding:8px 14px;
+    border-radius:16px;
+    border:1px solid var(--hairline);
+    background:rgba(255,255,255,0.6);
+    color:var(--ink);
+    outline:none;
+  }
+  .gallery-search::placeholder{ color:var(--ink-faint); }
+  .gallery-search:focus{ border-color:var(--amber); }
+
+  .gallery-count{ text-align:center; font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); margin-top:18px; }
+
+  .masonry{ max-width:1200px; margin:36px auto 0; column-count:4; column-gap:16px; }
+  .masonry-item{
+    margin-bottom:16px; border-radius:10px; overflow:hidden; cursor:pointer;
+    break-inside:avoid; position:relative;
+    box-shadow:0 10px 24px rgba(138,90,31,0.12);
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .masonry-item:hover{ transform:translateY(-3px); box-shadow:0 18px 36px rgba(138,90,31,0.2); }
+  .masonry-item .mi-fill{ width:100%; display:block; }
+  .masonry-item .mi-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 50%, rgba(43,33,20,0.55) 100%);
+    opacity:0; transition:opacity 0.25s ease;
+    display:flex; align-items:flex-end; padding:12px;
+  }
+  .masonry-item:hover .mi-overlay{ opacity:1; }
+  .masonry-item .mi-label{ font-family:var(--font-mono); font-size:10.5px; color:#fffaf0; letter-spacing:0.04em; }
+
+  .masonry-empty{ text-align:center; padding:60px 20px; font-family:var(--font-mono); font-size:13px; color:var(--ink-faint); display:none; }
+
+  @media (max-width: 1024px){ .masonry{ column-count:3; } }
+  @media (max-width: 680px){ .masonry{ column-count:2; } }
+
+  #lightbox{
+    position:fixed; inset:0; z-index:300;
+    background:rgba(43,33,20,0.78);
+    backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.3s ease;
+  }
+  #lightbox.visible{ opacity:1; pointer-events:auto; }
+  .lb-content{
+    display:flex; max-width:920px; width:100%; max-height:88vh;
+    background:var(--paper);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 60px 120px -30px rgba(0,0,0,0.5);
+    position:relative;
+  }
+  .lb-image{ flex:1.3; min-height:280px; background-size:cover; background-position:center; }
+  .lb-info{ flex:1; padding:32px 30px; overflow-y:auto; }
+  .lb-info .ec-title{ font-family:var(--font-display); font-style:italic; font-size:22px; margin-bottom:16px; color:var(--ink); }
+  .lb-close{
+    position:absolute; top:18px; right:18px;
+    width:36px; height:36px; border-radius:50%;
+    background:rgba(255,255,255,0.9);
+    border:none; cursor:pointer;
+    font-size:18px; color:var(--ink);
+    z-index:2;
+  }
+  .lb-close:hover{ color:var(--amber); }
+
+  @media (max-width: 700px){
+    .lb-content{ flex-direction:column; max-height:92vh; }
+    .lb-image{ min-height:200px; }
+  }
+
+  /* ===================== OUTRO ===================== */
+  #outro{ position:relative; min-height:60vh; display:flex; align-items:center; justify-content:center; padding:8vh 8vw; text-align:center; }
+  .outro-panel{
+    max-width:600px; background:var(--glass); border:1px solid var(--glass-edge);
+    border-radius:14px; backdrop-filter:blur(18px) saturate(140%);
+    padding:56px 48px; box-shadow:0 40px 90px -30px rgba(138,90,31,0.25);
+  }
+  .outro-panel h2{ font-family:var(--font-display); font-size:clamp(26px,3.4vw,38px); font-weight:500; margin-bottom:16px; color:var(--ink); }
+  .outro-panel p{ color:var(--ink-dim); font-size:14.5px; line-height:1.6; margin-bottom:26px; }
+  .contact-links{ display:flex; flex-direction:column; gap:0; text-align:left; }
+  .contact-links a{
+    font-family:var(--font-mono); font-size:13px; color:var(--ink); text-decoration:none;
+    border-bottom:1px solid var(--hairline); padding:14px 2px;
+    display:flex; justify-content:space-between; align-items:center;
+    transition:color 0.25s, padding-left 0.25s;
+  }
+  .contact-links a:first-child{ border-top:1px solid var(--hairline); }
+  .contact-links a:hover{ color:var(--amber); padding-left:8px; }
+  .contact-links a .arrow{ color:var(--amber-deep); }
+
+  footer.sitefoot{
+    text-align:center; padding:36px 0 56px;
+    font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); letter-spacing:0.08em;
+    position:relative; z-index:2;
+  }
+  footer.sitefoot a{ color:var(--amber-deep); text-decoration:none; }
+
+  @media (max-width: 860px){
+    .story-grid, .story-grid.reverse{ grid-template-columns:1fr; gap:30px; }
+    .story-grid.reverse .story-visual, .story-grid.reverse .story-text{ order:0; }
+    .story-visual{ aspect-ratio:16/9; max-width:420px; margin:0 auto; }
+  }
+
+  @media (max-width: 760px){
+    #camera-orbit-scene{ width:96vmin; height:96vmin; }
+    #camera-3d{ width:160px; height:108px; margin-left:-80px; margin-top:-54px; }
+    .cam-lens{ width:60px; height:60px; margin-left:-30px; margin-top:-30px; }
+    .cam-left, .cam-right{ width:50px; }
+    .cam-left{ margin-left:-80px; }
+    .cam-right{ margin-left:30px; }
+    .cam-top, .cam-bottom{ height:50px; }
+    .cam-top{ margin-top:-80px; }
+    .cam-bottom{ margin-top:30px; }
+    .orbit-photo{ width:54px; height:54px; margin-left:-27px; margin-top:-27px; }
+    .exif-card{ width:190px; padding:14px 16px; }
+    .outro-panel{ padding:40px 26px; }
+    .gallery-filters{ flex-direction:column; align-items:center; }
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="brand"><span class="dot"></span> garnavya</div>
+  <div id="modeToggle">
+    <a href="code.html">CODE</a>
+    <a href="snap.html" class="active">SNAP</a>
+  </div>
+</div>
+
+<div id="aperture-overlay">
+  <svg id="irisSvg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+    <rect class="iris-backdrop" x="0" y="0" width="1000" height="1000"></rect>
+    <circle class="iris-rim" id="irisRim" cx="500" cy="500" r="0"></circle>
+    <g id="irisBladeGroup"></g>
+  </svg>
+</div>
+
+<main>
+
+  <section id="hero" data-aperture-zone="true">
+    <div>
+      <div class="silhouette-wrap">
+        <div class="sil-glow"></div>
+        <div class="silhouette">
+          <div class="sil-head"></div>
+          <div class="sil-arm-l"></div>
+          <div class="sil-arm-r"></div>
+          <div class="sil-body"></div>
+          <div class="sil-camera"></div>
+        </div>
+        <span class="placeholder-flag">swap for your photo</span>
+      </div>
+      <div class="eyebrow">Frame 01 / Roll 06</div>
+      <h1>Garnavya<br/><span class="accent">shoots, too.</span></h1>
+      <p class="lede">
+        Frontend developer by trade, photographer by instinct. A few dozen
+        frames, one camera, and the moments that didn't make it into a
+        portfolio as code.
+      </p>
+      <div class="scroll-cue"><span class="chev">▾</span> scroll to begin the roll</div>
+    </div>
+  </section>
+
+  <section class="story-section" data-aperture-zone="true">
+    <div class="story-grid">
+      <div class="story-visual">
+        <div class="sv-frame"><span class="num">01</span>FIRST ROLL<span class="placeholder-tag">edit photo</span></div>
+      </div>
+      <div class="story-text">
+        <div class="eyebrow">The roll, so far</div>
+        <h2>How it started — and who helped it grow<span class="placeholder-tag">edit</span></h2>
+        <p>
+          Placeholder: write about the moment you first held a camera —
+          whose it was, where you were, and why it stuck. This is the
+          origin frame of the whole roll.
+        </p>
+        <p>
+          Placeholder: a line about the early learning curve — manual
+          mode, your first "real" shot, the picture that made you think
+          "okay, I want to keep doing this."
+        </p>
+        <div class="cred-list">
+          <div class="cred-item"><span class="ct">First camera</span><span class="cd">Canon EOS 1200D<span class="placeholder-tag">edit</span></span></div>
+          <div class="cred-item"><span class="ct">Best early shot</span><span class="cd">Placeholder — name it<span class="placeholder-tag">edit</span></span></div>
+        </div>
+
+        <p style="margin-top:28px;">
+          Placeholder: a shoutout to the friends who modeled, lent gear,
+          tagged along on shoots, or pushed you to take the photo you
+          almost skipped.
+        </p>
+        <div class="cred-list">
+          <div class="cred-item"><span class="ct">Kudos to</span><span class="cd">Friend name — what they helped with<span class="placeholder-tag">edit</span></span></div>
+          <div class="cred-item"><span class="ct">Kudos to</span><span class="cd">Friend name — what they helped with<span class="placeholder-tag">edit</span></span></div>
+        </div>
+        <div class="achievement-grid">
+          <div class="achievement-chip"><div class="ac-y">2025<span class="placeholder-tag">edit</span></div><div class="ac-t">Event / freelance shoot placeholder</div></div>
+          <div class="achievement-chip"><div class="ac-y">2025<span class="placeholder-tag">edit</span></div><div class="ac-t">Achievement placeholder</div></div>
+          <div class="achievement-chip"><div class="ac-y">2026<span class="placeholder-tag">edit</span></div><div class="ac-t">Event / freelance shoot placeholder</div></div>
+          <div class="achievement-chip"><div class="ac-y">2026<span class="placeholder-tag">edit</span></div><div class="ac-t">Achievement placeholder</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="camerastage" data-aperture-zone="true">
+    <div id="stage-sticky">
+      <div id="camera-orbit-scene">
+        <div class="drag-hint" id="dragHint">drag to rotate · auto-rotating</div>
+
+        <div id="camera-mount">
+          <div id="camera-3d">
+            <div class="cam-face cam-front">
+              <div class="cam-lens"></div>
+              <div class="cam-flash"></div>
+              <div class="cam-brand">CANON</div>
+            </div>
+            <div class="cam-face cam-back"></div>
+            <div class="cam-face cam-left"></div>
+            <div class="cam-face cam-right"></div>
+            <div class="cam-face cam-top"></div>
+            <div class="cam-face cam-bottom"></div>
+          </div>
+        </div>
+
+        <div id="orbitContainer"></div>
+
+        <div id="camera-label">
+          <div class="cl-name">Canon EOS 1200D</div>
+          <div class="cl-sub">The camera behind every frame</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery" data-aperture-zone="true">
+    <div class="gallery-head">
+      <div class="eyebrow">Full roll</div>
+      <h2>Every frame<span class="placeholder-tag">edit</span></h2>
+      <div class="gallery-filters">
+        <input type="text" class="gallery-search" id="gallerySearch" placeholder="Search by tag, location, year…" />
+      </div>
+      <div class="gallery-filters" id="filterYear"></div>
+      <div class="gallery-filters" id="filterTag"></div>
+      <div class="gallery-count" id="galleryCount"></div>
+    </div>
+    <div class="masonry" id="masonryGrid"></div>
+    <div class="masonry-empty" id="masonryEmpty">No frames match that search. Try a different tag, year, or keyword.</div>
+  </section>
+
+  <section id="outro" data-aperture-zone="true">
+    <div class="outro-panel">
+      <h2>Develop the rest of the roll<span class="placeholder-tag">edit</span></h2>
+      <p>Open to collaborations, shoots, and conversations about photography or frontend work.</p>
+      <div class="contact-links">
+        <a href="mailto:you@example.com">Email <span class="arrow">→</span></a>
+        <a href="#">Instagram <span class="arrow">→</span></a>
+        <a href="#">GitHub <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="sitefoot">© 2026 GARNAVYA — SHOT, NOT FILTERED — <a href="code.html">switch to CODE →</a></footer>
+
+<div id="lightbox">
+  <div class="lb-content">
+    <button class="lb-close" id="lbClose">×</button>
+    <div class="lb-image" id="lbImage"></div>
+    <div class="lb-info" id="lbInfo"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* =========================================================
+   PHOTO POOL — 45 placeholder entries with fake metadata.
+   Replace `img` with a real photo URL and fill in the rest
+   when ready. Each entry also gets a random aspect ratio so
+   the gallery masonry looks realistic.
+   ========================================================= */
+const LOCATIONS = ['Lucknow','Varanasi','Agra','Delhi','Goa','Jaipur','Himalayas','Kanpur'];
+const TAGS = ['portrait','street','landscape','golden hour','b&w','candid','architecture','nature'];
+const YEARS = ['2023','2024','2025','2026'];
+const LENSES = ['18-55mm kit lens','50mm f/1.8','EF-S 55-250mm'];
+const APERTURES = ['ƒ/1.8','ƒ/2.8','ƒ/4','ƒ/5.6','ƒ/8'];
+const SHUTTERS = ['1/60s','1/125s','1/250s','1/500s','1/1000s'];
+const ISOS = ['ISO 100','ISO 200','ISO 400','ISO 800'];
+
+function seededColor(seed){
+  const hues = [28, 18, 40, 12, 34, 8, 46];
+  const h = hues[seed % hues.length];
+  return `linear-gradient(150deg, hsl(${h},45%,78%), hsl(${h+8},38%,58%))`;
+}
+
+const PHOTO_POOL = Array.from({ length: 45 }, (_, i) => {
+  const idx = i + 1;
+  const ratios = [ [4,5], [1,1], [3,4], [5,4], [4,3] ];
+  const ratio = ratios[i % ratios.length];
+  return {
+    id: idx,
+    img: null,
+    bg: seededColor(idx),
+    title: `Untitled — Frame ${String(idx).padStart(2,'0')}`,
+    camera: 'Canon EOS 1200D',
+    lens: LENSES[idx % LENSES.length],
+    aperture: APERTURES[idx % APERTURES.length],
+    shutter: SHUTTERS[idx % SHUTTERS.length],
+    iso: ISOS[idx % ISOS.length],
+    location: LOCATIONS[idx % LOCATIONS.length],
+    year: YEARS[idx % YEARS.length],
+    tag: TAGS[idx % TAGS.length],
+    story: 'Placeholder note — describe how and why this shot happened.',
+    ratioW: ratio[0],
+    ratioH: ratio[1],
+  };
+});
+
+/* =========================================================
+   ORBIT — pick N photos per visit, shuffled w/o replacement
+   across visits (tracked in sessionStorage) so repeats are
+   minimized before the pool is exhausted.
+   ========================================================= */
+const ORBIT_COUNT = 10;
+
+function getOrbitSelection(){
+  const STORE_KEY = 'snap_orbit_remaining';
+  let remaining;
+  try {
+    remaining = JSON.parse(sessionStorage.getItem(STORE_KEY) || 'null');
+  } catch(e) { remaining = null; }
+
+  if (!remaining || !Array.isArray(remaining) || remaining.length === 0) {
+    remaining = PHOTO_POOL.map(p => p.id);
+    for (let i = remaining.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+    }
+  }
+
+  const selectedIds = remaining.splice(0, ORBIT_COUNT);
+  try { sessionStorage.setItem(STORE_KEY, JSON.stringify(remaining)); } catch(e) {}
+
+  return selectedIds.map(id => PHOTO_POOL.find(p => p.id === id));
+}
+
+const orbitSet = getOrbitSelection();
+
+const orbitContainer = document.getElementById('orbitContainer');
+orbitSet.forEach((photo, i) => {
+  const ph = document.createElement('div');
+  ph.className = 'orbit-photo';
+  ph.dataset.index = i;
+  ph.style.background = photo.img ? `url(${photo.img}) center/cover` : photo.bg;
+  ph.innerHTML = `<span class="ph-frame-no">${String(i+1).padStart(2,'0')}</span>`;
+  orbitContainer.appendChild(ph);
+
+  const card = document.createElement('div');
+  card.className = 'exif-card';
+  card.dataset.index = i;
+  card.innerHTML = `
+    <button class="ec-close">×</button>
+    <div class="ec-title">${photo.title}</div>
+    <div class="ec-row"><span class="ec-k">Camera</span><span class="ec-v">${photo.camera}</span></div>
+    <div class="ec-row"><span class="ec-k">Lens</span><span class="ec-v">${photo.lens}</span></div>
+    <div class="ec-row"><span class="ec-k">Aperture</span><span class="ec-v">${photo.aperture}</span></div>
+    <div class="ec-row"><span class="ec-k">Shutter</span><span class="ec-v">${photo.shutter}</span></div>
+    <div class="ec-row"><span class="ec-k">ISO</span><span class="ec-v">${photo.iso}</span></div>
+    <div class="ec-row"><span class="ec-k">Location</span><span class="ec-v">${photo.location}</span></div>
+    <div class="ec-row"><span class="ec-k">Date</span><span class="ec-v">${photo.year}</span></div>
+    <p class="ec-story">${photo.story}</p>
+  `;
+  orbitContainer.appendChild(card);
+});
+
+/* =========================================================
+   CSS 3D CAMERA — auto-rotate + drag override
+   ========================================================= */
+const camera3d = document.getElementById('camera-3d');
+const dragHint = document.getElementById('dragHint');
+
+let rotY = -20, rotX = -8;
+let autoRotating = true;
+const autoSpeed = 0.12;
+let isDragging = false, lastX = 0, lastY = 0, dragTimeout = null;
+
+function applyRotation(){ camera3d.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; }
+
+function tick(){
+  if (autoRotating && !isDragging) { rotY += autoSpeed; applyRotation(); }
+  requestAnimationFrame(tick);
+}
+tick();
+
+function startDrag(x, y){
+  isDragging = true; autoRotating = false; lastX = x; lastY = y;
+  dragHint.style.opacity = '0'; clearTimeout(dragTimeout);
+}
+function moveDrag(x, y){
+  if (!isDragging) return;
+  const dx = x - lastX, dy = y - lastY;
+  rotY += dx * 0.4; rotX = Math.max(-60, Math.min(60, rotX - dy * 0.4));
+  lastX = x; lastY = y; applyRotation();
+}
+function endDrag(){
+  isDragging = false;
+  dragTimeout = setTimeout(() => { autoRotating = true; dragHint.style.opacity = '0.85'; }, 2200);
+}
+
+camera3d.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+window.addEventListener('mouseup', endDrag);
+camera3d.addEventListener('touchstart', (e) => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); }, { passive: true });
+window.addEventListener('touchmove', (e) => { if (!isDragging) return; const t = e.touches[0]; moveDrag(t.clientX, t.clientY); }, { passive: true });
+window.addEventListener('touchend', endDrag);
+
+/* =========================================================
+   ORBIT LAYOUT — position photos + dock cards
+   ========================================================= */
+const orbitScene = document.getElementById('camera-orbit-scene');
+
+function layoutOrbit(){
+  const photos = Array.from(document.querySelectorAll('.orbit-photo'));
+  const cards = Array.from(document.querySelectorAll('.exif-card'));
+  const rect = orbitScene.getBoundingClientRect();
+  const cx = rect.width / 2, cy = rect.height / 2;
+  const isMobile = rect.width < 760;
+  const radius = Math.min(rect.width, rect.height) * (isMobile ? 0.42 : 0.40);
+
+  photos.forEach((photo, i) => {
+    const angle = (i / photos.length) * Math.PI * 2 - Math.PI / 2;
+    const x = cx + radius * Math.cos(angle);
+    const y = cy + radius * Math.sin(angle) * 0.62;
+    photo.style.left = x + 'px';
+    photo.style.top = y + 'px';
+
+    const card = cards[i];
+    if (card) {
+      const cardRadius = radius + (isMobile ? 70 : 130);
+      const cx2 = cx + cardRadius * Math.cos(angle);
+      const cy2 = cy + cardRadius * Math.sin(angle) * 0.62;
+      const cardW = isMobile ? 190 : 250;
+      const cardH = isMobile ? 220 : 240;
+      const clampedX = Math.max(8, Math.min(rect.width - cardW - 8, cx2 - cardW/2));
+      const clampedY = Math.max(8, Math.min(rect.height - cardH - 8, cy2 - cardH/2));
+      card.style.left = clampedX + 'px';
+      card.style.top = clampedY + 'px';
+    }
+  });
+}
+layoutOrbit();
+window.addEventListener('resize', layoutOrbit);
+
+let activeCardIndex = null;
+function closeAllCards(){
+  document.querySelectorAll('.exif-card').forEach(c => c.classList.remove('visible'));
+  document.querySelectorAll('.orbit-photo').forEach(p => p.classList.remove('active'));
+  activeCardIndex = null;
+}
+orbitContainer.addEventListener('click', (e) => {
+  const photo = e.target.closest('.orbit-photo');
+  const closeBtn = e.target.closest('.ec-close');
+  if (closeBtn) { e.stopPropagation(); closeAllCards(); return; }
+  if (!photo) return;
+  e.stopPropagation();
+  const idx = photo.dataset.index;
+  const card = document.querySelector(`.exif-card[data-index="${idx}"]`);
+  if (!card) return;
+  if (activeCardIndex === idx) { closeAllCards(); return; }
+  closeAllCards();
+  card.classList.add('visible');
+  photo.classList.add('active');
+  activeCardIndex = idx;
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.orbit-photo') && !e.target.closest('.exif-card')) closeAllCards();
+});
+
+/* =========================================================
+   PINTEREST GALLERY — masonry + filters + search + lightbox
+   ========================================================= */
+const masonryGrid = document.getElementById('masonryGrid');
+const masonryEmpty = document.getElementById('masonryEmpty');
+const galleryCount = document.getElementById('galleryCount');
+const filterYearEl = document.getElementById('filterYear');
+const filterTagEl = document.getElementById('filterTag');
+const gallerySearch = document.getElementById('gallerySearch');
+
+let activeYear = 'all';
+let activeTag = 'all';
+
+function buildFilterChips(container, values, onSelect){
+  const allChip = document.createElement('div');
+  allChip.className = 'filter-chip active';
+  allChip.textContent = 'All';
+  allChip.addEventListener('click', () => onSelect('all'));
+  container.appendChild(allChip);
+
+  values.forEach(v => {
+    const chip = document.createElement('div');
+    chip.className = 'filter-chip';
+    chip.textContent = v;
+    chip.addEventListener('click', () => onSelect(v));
+    container.appendChild(chip);
+  });
+}
+
+function refreshChipStates(container, activeVal){
+  Array.from(container.children).forEach(chip => {
+    const isAll = chip.textContent === 'All';
+    chip.classList.toggle('active', (isAll && activeVal === 'all') || chip.textContent === activeVal);
+  });
+}
+
+buildFilterChips(filterYearEl, YEARS, (v) => { activeYear = v; refreshChipStates(filterYearEl, v); renderGallery(); });
+buildFilterChips(filterTagEl, TAGS, (v) => { activeTag = v; refreshChipStates(filterTagEl, v); renderGallery(); });
+
+gallerySearch.addEventListener('input', renderGallery);
+
+function renderGallery(){
+  const query = gallerySearch.value.trim().toLowerCase();
+  const filtered = PHOTO_POOL.filter(p => {
+    if (activeYear !== 'all' && p.year !== activeYear) return false;
+    if (activeTag !== 'all' && p.tag !== activeTag) return false;
+    if (query) {
+      const haystack = `${p.tag} ${p.location} ${p.year} ${p.title}`.toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    return true;
+  });
+
+  masonryGrid.innerHTML = '';
+  masonryEmpty.style.display = filtered.length === 0 ? 'block' : 'none';
+  galleryCount.textContent = `${filtered.length} of ${PHOTO_POOL.length} frames`;
+
+  filtered.forEach(photo => {
+    const item = document.createElement('div');
+    item.className = 'masonry-item';
+    const heightPct = (photo.ratioH / photo.ratioW) * 100;
+    item.innerHTML = `
+      <div class="mi-fill" style="background:${photo.bg}; padding-bottom:${heightPct}%;"></div>
+      <div class="mi-overlay"><span class="mi-label">${photo.location} · ${photo.year}</span></div>
+    `;
+    item.addEventListener('click', () => openLightbox(photo));
+    masonryGrid.appendChild(item);
+  });
+}
+renderGallery();
+
+const lightbox = document.getElementById('lightbox');
+const lbImage = document.getElementById('lbImage');
+const lbInfo = document.getElementById('lbInfo');
+const lbClose = document.getElementById('lbClose');
+
+function openLightbox(photo){
+  lbImage.style.background = photo.img ? `url(${photo.img}) center/cover` : photo.bg;
+  lbInfo.innerHTML = `
+    <div class="ec-title">${photo.title}</div>
+    <div class="ec-row"><span class="ec-k">Camera</span><span class="ec-v">${photo.camera}</span></div>
+    <div class="ec-row"><span class="ec-k">Lens</span><span class="ec-v">${photo.lens}</span></div>
+    <div class="ec-row"><span class="ec-k">Aperture</span><span class="ec-v">${photo.aperture}</span></div>
+    <div class="ec-row"><span class="ec-k">Shutter</span><span class="ec-v">${photo.shutter}</span></div>
+    <div class="ec-row"><span class="ec-k">ISO</span><span class="ec-v">${photo.iso}</span></div>
+    <div class="ec-row"><span class="ec-k">Location</span><span class="ec-v">${photo.location}</span></div>
+    <div class="ec-row"><span class="ec-k">Date</span><span class="ec-v">${photo.year}</span></div>
+    <p class="ec-story">${photo.story}</p>
+  `;
+  lightbox.classList.add('visible');
+}
+lbClose.addEventListener('click', () => lightbox.classList.remove('visible'));
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('visible'); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') lightbox.classList.remove('visible'); });
+
+/* =========================================================
+   APERTURE TRANSITION — a real iris diaphragm.
+
+   How it works: BLADE_COUNT blades are arranged around a pivot
+   circle of radius PIVOT_R, centered on the viewBox. Each blade
+   is a quadrilateral: two edges run from its pivot point out to
+   the rim (sized so the blade is wide enough to fully cover its
+   1/Nth slice when rotated closed), and it rotates about its own
+   pivot via the SVG transform attribute's rotate(deg, cx, cy) syntax.
+
+   At "open" rotation, every blade is swung so its body tucks
+   outside the visible circle (fully retracted, overlay invisible).
+   At "closed" rotation, every blade swings inward so adjacent
+   blades overlap and seal the center — exactly how a real
+   diaphragm stops down to ƒ-closed.
+   ========================================================= */
+const VB = 1000;
+const CX = VB / 2, CY = VB / 2;
+const BLADE_COUNT = 8;
+const PIVOT_R = 430;      // pivot points sit just outside the visible area
+const BLADE_REACH = 620;  // how far each blade extends from its pivot
+const BLADE_WIDTH = 130;  // half-width of each blade at its base
+
+const irisBladeGroup = document.getElementById('irisBladeGroup');
+const irisRim = document.getElementById('irisRim');
+const apertureOverlay = document.getElementById('aperture-overlay');
+
+const blades = [];
+
+for (let i = 0; i < BLADE_COUNT; i++) {
+  const angle = (i / BLADE_COUNT) * Math.PI * 2;
+  const px = CX + PIVOT_R * Math.cos(angle);
+  const py = CY + PIVOT_R * Math.sin(angle);
+
+  // Blade quadrilateral drawn in its own local space, pivot at (px, py),
+  // pointing inward toward center initially — JS rotation handles the sweep.
+  const dirX = Math.cos(angle + Math.PI); // direction pointing toward center
+  const dirY = Math.sin(angle + Math.PI);
+  const perpX = -dirY, perpY = dirX; // perpendicular for blade width
+
+  const tipX = px + dirX * BLADE_REACH;
+  const tipY = py + dirY * BLADE_REACH;
+
+  const baseLX = px + perpX * BLADE_WIDTH;
+  const baseLY = py + perpY * BLADE_WIDTH;
+  const baseRX = px - perpX * BLADE_WIDTH;
+  const baseRY = py - perpY * BLADE_WIDTH;
+
+  // tip is widened slightly too, so the blade is a tapered quad, not a triangle
+  const tipLX = tipX + perpX * (BLADE_WIDTH * 0.35);
+  const tipLY = tipY + perpY * (BLADE_WIDTH * 0.35);
+  const tipRX = tipX - perpX * (BLADE_WIDTH * 0.35);
+  const tipRY = tipY - perpY * (BLADE_WIDTH * 0.35);
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  const d = `M ${baseLX} ${baseLY} L ${tipLX} ${tipLY} L ${tipRX} ${tipRY} L ${baseRX} ${baseRY} Z`;
+  path.setAttribute('d', d);
+  path.setAttribute('class', 'iris-blade');
+  irisBladeGroup.appendChild(path);
+
+  // Rotation angles (deg) about this blade's own pivot, verified geometrically:
+  // closed (~-5deg): tip sweeps through center, dense overlap with neighbors, full seal.
+  // open (~95deg): tip swings tangentially clear, leaving a clean octagonal opening.
+  // Rotation is applied via the SVG transform attribute's native rotate(deg, cx, cy)
+  // syntax — supported in every browser since SVG1, avoiding any dependency on the
+  // CSS transform-box property (whose `view-box` value has patchier support).
+  blades.push({ el: path, px, py, openRot: 95, closedRot: -5 });
+}
+
+function setIrisProgress(t){
+  // t: 0 = fully open (invisible), 1 = fully closed (sealed)
+  const clamped = Math.max(0, Math.min(1, t));
+  blades.forEach(b => {
+    const rot = b.openRot + (b.closedRot - b.openRot) * clamped;
+    b.el.setAttribute('transform', `rotate(${rot} ${b.px} ${b.py})`);
+  });
+  // rim should mirror the actual opening size: small when closed, larger when open
+  irisRim.setAttribute('r', 230 - clamped * 200);
+  apertureOverlay.classList.toggle('iris-visible', clamped > 0.02);
+}
+setIrisProgress(0);
+
+let apertureBusy = false;
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function playApertureCycle(){
+  if (apertureBusy) return;
+  apertureBusy = true;
+
+  if (prefersReducedMotion) {
+    // Respect reduced-motion: skip the animated sweep, just confirm the
+    // transition happened with a brief instant flash instead of a sweep.
+    setIrisProgress(1);
+    setTimeout(() => { setIrisProgress(0); apertureBusy = false; }, 120);
+    return;
+  }
+
+  const state = { t: 0 };
+  gsap.timeline({ onComplete: () => { apertureBusy = false; } })
+    .to(state, { t: 1, duration: 0.34, ease: 'power3.in', onUpdate: () => setIrisProgress(state.t) })
+    .to(state, { t: 0, duration: 0.42, ease: 'power3.out', delay: 0.05, onUpdate: () => setIrisProgress(state.t) });
+}
+
+const zones = Array.from(document.querySelectorAll('[data-aperture-zone]'));
+zones.forEach((zone, i) => {
+  if (i === 0) return;
+  ScrollTrigger.create({
+    trigger: zone,
+    start: 'top 70%',
+    onEnter: () => playApertureCycle(),
+    onEnterBack: () => playApertureCycle(),
+  });
+});
+</script>
+
+</body>
+</html>
