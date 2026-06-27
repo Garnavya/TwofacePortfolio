@@ -20,13 +20,13 @@ function seededColor(seed){
   return `linear-gradient(150deg, hsl(${h},45%,78%), hsl(${h+8},38%,58%))`;
 }
 
-const PHOTO_POOL = Array.from({ length: 45 }, (_, i) => {
+const PHOTO_POOL = Array.from({ length: 77 }, (_, i) => {
   const idx = i + 1;
   const ratios = [ [4,5], [1,1], [3,4], [5,4], [4,3] ];
   const ratio = ratios[i % ratios.length];
   return {
     id: idx,
-    img: null,
+    img: `/photos/frame-${String(idx).padStart(2, '0')}.jpg`,
     bg: seededColor(idx),
     title: `Untitled — Frame ${String(idx).padStart(2,'0')}`,
     camera: 'Canon EOS 1200D',
@@ -265,7 +265,7 @@ function renderGallery(){
     item.className = 'masonry-item';
     const heightPct = (photo.ratioH / photo.ratioW) * 100;
     item.innerHTML = `
-      <div class="mi-fill" style="background:${photo.bg}; padding-bottom:${heightPct}%;"></div>
+      <div class="mi-fill" style="background:${photo.img ? `url(${photo.img}) center/cover` : photo.bg}; padding-bottom:${heightPct}%;"></div>
       <div class="mi-overlay"><span class="mi-label">${photo.location} · ${photo.year}</span></div>
     `;
     item.addEventListener('click', () => openLightbox(photo));
