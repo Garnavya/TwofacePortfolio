@@ -1,0 +1,27 @@
+{
+  "name": "twoface-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "vite --config client/vite.config.js",
+    "dev:server": "node server/index.js",
+    "build": "vite build --config client/vite.config.js",
+    "start": "node server/start.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.21.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "vite": "^6.2.0"
+  }
+}
