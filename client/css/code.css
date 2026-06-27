@@ -292,6 +292,82 @@ h2{
 .tl-item .tt{ font-size:15.5px; font-weight:600; margin-top:4px; }
 .tl-item .td{ font-size:12.5px; color:var(--text-dim); margin-top:4px; max-width:480px; line-height:1.6; }
 
+/* ---- github activity ---- */
+.gh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.gh-card {
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.16);
+  transition: border-color 0.25s, transform 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+.gh-card:hover {
+  border-color: var(--teal-dim);
+  transform: translateY(-2px);
+}
+.gh-card .winbar {
+  background: rgba(0,0,0,0.4);
+  padding: 8px 14px;
+}
+.gh-card .wincontent {
+  padding: 18px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.gh-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.gh-meta span { display: flex; align-items: center; gap: 5px; }
+.gh-lang-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal-dim); }
+.gh-live { 
+  color: var(--teal); margin-left: auto; font-weight: 600; 
+  animation: blink 1.5s infinite; letter-spacing: 0.08em; 
+  text-transform: uppercase; font-size: 9px; 
+}
+.gh-commits-toggle {
+  margin-top: 16px;
+  background: none;
+  border: none;
+  color: var(--teal-dim);
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.25s;
+}
+.gh-commits-toggle:hover { color: var(--teal); }
+.gh-commits-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gh-commits-list.collapsed { display: none; }
+.gh-commit { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+.gh-commit .hash { color: var(--violet); margin-right: 6px; }
+.gh-commit .ctime { color: var(--teal-deep); font-size: 9px; margin-left: 6px; }
+
+.skeleton-pulse {
+  background: rgba(223,245,240,0.05);
+  border-radius: 4px;
+  animation: skelPulse 1.5s infinite ease-in-out;
+}
+@keyframes skelPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
 /* ---- contact ---- */
 .contact-links{ margin-top:30px; display:flex; flex-direction:column; gap:0; }
 .contact-links a{

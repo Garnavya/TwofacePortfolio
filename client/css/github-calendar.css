@@ -1,0 +1,51 @@
+#github-heatmap {
+  margin-top: 24px;
+}
+.cal-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px; /* For scrollbar */
+}
+.cal-grid {
+  display: flex;
+  gap: 3px;
+  min-width: max-content;
+}
+.cal-week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cal-day {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.03); /* Level 0 */
+  transition: transform 0.1s, border-color 0.1s;
+  border: 1px solid transparent;
+}
+.cal-day:hover {
+  transform: scale(1.2);
+  border-color: var(--text-dim);
+}
+/* Mapping the 4 intensity levels to your Teal palette */
+.cal-day[data-level="1"] { background: var(--teal-deep); }
+.cal-day[data-level="2"] { background: var(--teal-dim); }
+.cal-day[data-level="3"] { background: var(--teal); }
+.cal-day[data-level="4"] { background: var(--text); } /* Peak intensity */
+
+.cal-meta {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cal-legend span { margin: 0 4px; }

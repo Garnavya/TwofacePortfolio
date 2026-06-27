@@ -11,6 +11,7 @@
 
 <link rel="stylesheet" href="css/shared.css">
 <link rel="stylesheet" href="css/code.css">
+<link rel="stylesheet" href="css/github-calendar.css">
 </head>
 <body>
 
@@ -134,6 +135,100 @@
     </div>
   </section>
 
+  <section id="github-activity">
+    <div class="winframe">
+      <div class="winbar">
+        <div class="tl"><span></span><span></span><span></span></div>
+        <div class="path">~/garnavya/github-activity</div>
+      </div>
+      <div class="wincontent">
+        <div class="eyebrow">live from github</div>
+        <h2>Recent Activity<span class="placeholder-tag pstatus active" id="gh-status">fetching</span></h2>
+        
+        <div class="gh-grid" id="gh-grid">
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <template id="gh-card-template">
+    <div class="gh-card">
+      <div class="winbar">
+        <div class="tl"><span></span><span></span><span></span></div>
+        <div class="path gh-repo-name"></div>
+      </div>
+      <div class="wincontent">
+        <div class="gh-meta">
+          <span class="gh-lang"><i class="gh-lang-dot"></i><span class="gh-lang-text"></span></span>
+          <span class="gh-stars">★ <span class="gh-star-count"></span></span>
+          <span class="gh-forks">⑂ <span class="gh-fork-count"></span></span>
+          <span class="gh-time"></span>
+          <span class="gh-live">● live</span>
+        </div>
+        <button class="gh-commits-toggle"></button>
+        <div class="gh-commits-list collapsed"></div>
+      </div>
+    </div>
+  </template>
+
+  <template id="gh-card-skeleton">
+    <div class="gh-card gh-skeleton">
+      <div class="winbar">
+        <div class="tl"><span></span><span></span><span></span></div>
+        <div class="path skeleton-pulse" style="width: 60%; height: 12px;"></div>
+      </div>
+      <div class="wincontent">
+        <div class="gh-meta">
+          <span class="skeleton-pulse" style="width: 40px; height: 10px;"></span>
+          <span class="skeleton-pulse" style="width: 30px; height: 10px;"></span>
+          <span class="skeleton-pulse" style="width: 60px; height: 10px;"></span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="gh-card-error">
+    <div class="gh-card">
+      <div class="winbar">
+        <div class="tl"><span></span><span></span><span></span></div>
+        <div class="path">~/error</div>
+      </div>
+      <div class="wincontent" style="justify-content: center; align-items: center; text-align: center;">
+        <div style="color: var(--rose); font-size: 12px; margin-top: 10px;">Failed to load repository data.</div>
+      </div>
+    </div>
+  </template>
+
+  <section id="github-heatmap">
+    <div class="winframe">
+      <div class="winbar">
+        <div class="tl"><span></span><span></span><span></span></div>
+        <div class="path">~/garnavya/contributions.graph</div>
+      </div>
+      <div class="wincontent">
+        <div class="eyebrow">git commit matrix</div>
+        <h2>Activity Map<span class="placeholder-tag pstatus active" id="gh-cal-status">fetching</span></h2>
+        
+        <div class="cal-wrapper">
+          <div class="cal-grid" id="gh-calendar-grid">
+            </div>
+          <div class="cal-meta">
+            <span id="gh-cal-total">Loading contributions...</span>
+            <div class="cal-legend">
+              Less 
+              <div class="cal-day" data-level="0"></div>
+              <div class="cal-day" data-level="1"></div>
+              <div class="cal-day" data-level="2"></div>
+              <div class="cal-day" data-level="3"></div>
+              <div class="cal-day" data-level="4"></div>
+              More
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="contact">
     <div class="winframe">
       <div class="winbar">
@@ -157,6 +252,7 @@
 <footer>© 2026 GARNAVYA — COMPILED, NOT TEMPLATED — <a href="snap.html" style="color:var(--teal-dim); text-decoration:none;">switch to SNAP →</a></footer>
 
 <script src="js/code.js" defer></script>
+<script src="js/github-calendar.js" defer></script>
 
 </body>
 </html>

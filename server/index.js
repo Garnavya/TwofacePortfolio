@@ -3,11 +3,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import config from './config/env.js';
 import apiRouter from './routes/api.js';
+import calendarRouter from './routes/github-calendar.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 app.use('/api', apiRouter);
+app.use('/api/github/calendar', calendarRouter);
 
 if (config.nodeEnv === 'production') {
   const distPath = path.join(__dirname, '../dist');
