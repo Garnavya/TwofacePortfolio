@@ -16,7 +16,7 @@
     "title": "Untitled — Frame 02",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
+    "aperture": "ƒ/3.5",
     "shutter": "1/60s",
     "iso": "ISO 800",
     "year": "2024"
@@ -27,8 +27,8 @@
     "title": "Untitled — Frame 03",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/3.5",
-    "shutter": "1/60s",
+    "aperture": "ƒ/4",
+    "shutter": "1/100s",
     "iso": "ISO 800",
     "year": "2024"
   },
@@ -39,7 +39,7 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/4",
-    "shutter": "1/100s",
+    "shutter": "1/60s",
     "iso": "ISO 800",
     "year": "2024"
   },
@@ -47,34 +47,34 @@
     "id": 5,
     "img": "/photos/frame-05.jpg",
     "title": "Untitled — Frame 05",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/4.5",
-    "shutter": "1/60s",
-    "iso": "ISO 800",
-    "year": "2024"
+    "camera": "Xiaomi 2311DRK48I",
+    "lens": "18-55mm kit lens",
+    "aperture": "ƒ/1.7",
+    "shutter": "1/545s",
+    "iso": "ISO 50",
+    "year": "2025"
   },
   {
     "id": 6,
     "img": "/photos/frame-06.jpg",
     "title": "Untitled — Frame 06",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/60s",
-    "iso": "ISO 800",
-    "year": "2024"
+    "camera": "Xiaomi 2311DRK48I",
+    "lens": "18-55mm kit lens",
+    "aperture": "ƒ/2.4",
+    "shutter": "1/528s",
+    "iso": "ISO 50",
+    "year": "2025"
   },
   {
     "id": 7,
     "img": "/photos/frame-07.jpg",
     "title": "Untitled — Frame 07",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/4",
-    "shutter": "1/60s",
-    "iso": "ISO 800",
-    "year": "2024"
+    "camera": "Xiaomi 2311DRK48I",
+    "lens": "18-55mm kit lens",
+    "aperture": "ƒ/2.4",
+    "shutter": "1/636s",
+    "iso": "ISO 50",
+    "year": "2025"
   },
   {
     "id": 8,
@@ -83,7 +83,7 @@
     "camera": "Xiaomi 2311DRK48I",
     "lens": "18-55mm kit lens",
     "aperture": "ƒ/1.7",
-    "shutter": "1/545s",
+    "shutter": "1/763s",
     "iso": "ISO 50",
     "year": "2025"
   },
@@ -93,8 +93,8 @@
     "title": "Untitled — Frame 09",
     "camera": "Xiaomi 2311DRK48I",
     "lens": "18-55mm kit lens",
-    "aperture": "ƒ/2.4",
-    "shutter": "1/528s",
+    "aperture": "ƒ/1.7",
+    "shutter": "1/968s",
     "iso": "ISO 50",
     "year": "2025"
   },
@@ -104,8 +104,8 @@
     "title": "Untitled — Frame 10",
     "camera": "Xiaomi 2311DRK48I",
     "lens": "18-55mm kit lens",
-    "aperture": "ƒ/2.4",
-    "shutter": "1/636s",
+    "aperture": "ƒ/1.7",
+    "shutter": "1/1224s",
     "iso": "ISO 50",
     "year": "2025"
   },
@@ -113,34 +113,34 @@
     "id": 11,
     "img": "/photos/frame-11.jpg",
     "title": "Untitled — Frame 11",
-    "camera": "Xiaomi 2311DRK48I",
-    "lens": "18-55mm kit lens",
-    "aperture": "ƒ/1.7",
-    "shutter": "1/763s",
-    "iso": "ISO 50",
-    "year": "2025"
+    "camera": "Canon Canon EOS 1200D",
+    "lens": "EF-S18-55mm f/3.5-5.6 III",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/500s",
+    "iso": "ISO 100",
+    "year": "2024"
   },
   {
     "id": 12,
     "img": "/photos/frame-12.jpg",
     "title": "Untitled — Frame 12",
-    "camera": "Xiaomi 2311DRK48I",
-    "lens": "18-55mm kit lens",
-    "aperture": "ƒ/1.7",
-    "shutter": "1/968s",
-    "iso": "ISO 50",
-    "year": "2025"
+    "camera": "Canon Canon EOS 1200D",
+    "lens": "EF-S18-55mm f/3.5-5.6 III",
+    "aperture": "ƒ/5",
+    "shutter": "1/400s",
+    "iso": "ISO 100",
+    "year": "2024"
   },
   {
     "id": 13,
     "img": "/photos/frame-13.jpg",
     "title": "Untitled — Frame 13",
-    "camera": "Xiaomi 2311DRK48I",
-    "lens": "18-55mm kit lens",
-    "aperture": "ƒ/1.7",
-    "shutter": "1/1224s",
-    "iso": "ISO 50",
-    "year": "2025"
+    "camera": "Canon Canon EOS 1200D",
+    "lens": "EF-S18-55mm f/3.5-5.6 III",
+    "aperture": "ƒ/5",
+    "shutter": "1/60s",
+    "iso": "ISO 800",
+    "year": "2024"
   },
   {
     "id": 14,
@@ -148,8 +148,8 @@
     "title": "Untitled — Frame 14",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/500s",
+    "aperture": "ƒ/7.1",
+    "shutter": "1/160s",
     "iso": "ISO 100",
     "year": "2024"
   },
@@ -159,8 +159,8 @@
     "title": "Untitled — Frame 15",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/400s",
+    "aperture": "ƒ/7.1",
+    "shutter": "1/125s",
     "iso": "ISO 100",
     "year": "2024"
   },
@@ -171,8 +171,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/60s",
-    "iso": "ISO 800",
+    "shutter": "1/200s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -181,9 +181,9 @@
     "title": "Untitled — Frame 17",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/7.1",
-    "shutter": "1/160s",
-    "iso": "ISO 100",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/250s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -192,9 +192,9 @@
     "title": "Untitled — Frame 18",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/7.1",
-    "shutter": "1/125s",
-    "iso": "ISO 100",
+    "aperture": "ƒ/5",
+    "shutter": "1/250s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -204,8 +204,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/200s",
-    "iso": "ISO 1600",
+    "shutter": "1/250s",
+    "iso": "ISO 400",
     "year": "2024"
   },
   {
@@ -216,7 +216,7 @@
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
     "shutter": "1/200s",
-    "iso": "ISO 1600",
+    "iso": "ISO 800",
     "year": "2024"
   },
   {
@@ -226,8 +226,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5.6",
-    "shutter": "1/200s",
-    "iso": "ISO 1600",
+    "shutter": "1/320s",
+    "iso": "ISO 250",
     "year": "2024"
   },
   {
@@ -237,7 +237,7 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5.6",
-    "shutter": "1/250s",
+    "shutter": "1/60s",
     "iso": "ISO 1600",
     "year": "2024"
   },
@@ -247,9 +247,9 @@
     "title": "Untitled — Frame 23",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/250s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/60s",
+    "iso": "ISO 1250",
     "year": "2024"
   },
   {
@@ -259,8 +259,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5.6",
-    "shutter": "1/160s",
-    "iso": "ISO 3200",
+    "shutter": "1/60s",
+    "iso": "ISO 800",
     "year": "2024"
   },
   {
@@ -269,9 +269,9 @@
     "title": "Untitled — Frame 25",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/250s",
-    "iso": "ISO 400",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/200s",
+    "iso": "ISO 100",
     "year": "2024"
   },
   {
@@ -281,8 +281,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/200s",
-    "iso": "ISO 800",
+    "shutter": "1/160s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -291,9 +291,9 @@
     "title": "Untitled — Frame 27",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/320s",
-    "iso": "ISO 250",
+    "aperture": "ƒ/5",
+    "shutter": "1/160s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -303,7 +303,7 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5.6",
-    "shutter": "1/60s",
+    "shutter": "1/160s",
     "iso": "ISO 1600",
     "year": "2024"
   },
@@ -313,9 +313,9 @@
     "title": "Untitled — Frame 29",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/60s",
-    "iso": "ISO 1250",
+    "aperture": "ƒ/5",
+    "shutter": "1/250s",
+    "iso": "ISO 800",
     "year": "2024"
   },
   {
@@ -324,9 +324,9 @@
     "title": "Untitled — Frame 30",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/60s",
-    "iso": "ISO 800",
+    "aperture": "ƒ/5",
+    "shutter": "1/250s",
+    "iso": "ISO 400",
     "year": "2024"
   },
   {
@@ -335,9 +335,9 @@
     "title": "Untitled — Frame 31",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/200s",
-    "iso": "ISO 100",
+    "aperture": "ƒ/5",
+    "shutter": "1/250s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -346,8 +346,8 @@
     "title": "Untitled — Frame 32",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/160s",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/250s",
     "iso": "ISO 1600",
     "year": "2024"
   },
@@ -358,8 +358,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/160s",
-    "iso": "ISO 1600",
+    "shutter": "1/80s",
+    "iso": "ISO 320",
     "year": "2024"
   },
   {
@@ -368,9 +368,9 @@
     "title": "Untitled — Frame 34",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/160s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/3.5",
+    "shutter": "1/40s",
+    "iso": "ISO 320",
     "year": "2024"
   },
   {
@@ -379,8 +379,8 @@
     "title": "Untitled — Frame 35",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/160s",
+    "aperture": "ƒ/3.5",
+    "shutter": "1/50s",
     "iso": "ISO 1600",
     "year": "2024"
   },
@@ -390,9 +390,9 @@
     "title": "Untitled — Frame 36",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/250s",
-    "iso": "ISO 800",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/100s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -401,9 +401,9 @@
     "title": "Untitled — Frame 37",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/250s",
-    "iso": "ISO 400",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/40s",
+    "iso": "ISO 1600",
     "year": "2024"
   },
   {
@@ -413,7 +413,7 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/250s",
+    "shutter": "1/125s",
     "iso": "ISO 1600",
     "year": "2024"
   },
@@ -423,8 +423,8 @@
     "title": "Untitled — Frame 39",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/250s",
+    "aperture": "ƒ/5",
+    "shutter": "1/125s",
     "iso": "ISO 1600",
     "year": "2024"
   },
@@ -435,9 +435,9 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/80s",
-    "iso": "ISO 320",
-    "year": "2024"
+    "shutter": "1/1000s",
+    "iso": "ISO 1600",
+    "year": "2025"
   },
   {
     "id": 41,
@@ -445,10 +445,10 @@
     "title": "Untitled — Frame 41",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/3.5",
-    "shutter": "1/40s",
-    "iso": "ISO 320",
-    "year": "2024"
+    "aperture": "ƒ/5",
+    "shutter": "1/1000s",
+    "iso": "ISO 1600",
+    "year": "2025"
   },
   {
     "id": 42,
@@ -456,10 +456,10 @@
     "title": "Untitled — Frame 42",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/3.5",
-    "shutter": "1/50s",
+    "aperture": "ƒ/5",
+    "shutter": "1/4000s",
     "iso": "ISO 1600",
-    "year": "2024"
+    "year": "2025"
   },
   {
     "id": 43,
@@ -468,9 +468,9 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5.6",
-    "shutter": "1/100s",
-    "iso": "ISO 1600",
-    "year": "2024"
+    "shutter": "1/320s",
+    "iso": "ISO 400",
+    "year": "2025"
   },
   {
     "id": 44,
@@ -479,9 +479,9 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5.6",
-    "shutter": "1/40s",
-    "iso": "ISO 1600",
-    "year": "2024"
+    "shutter": "1/320s",
+    "iso": "ISO 400",
+    "year": "2025"
   },
   {
     "id": 45,
@@ -490,9 +490,9 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/125s",
-    "iso": "ISO 1600",
-    "year": "2024"
+    "shutter": "1/800s",
+    "iso": "ISO 100",
+    "year": "2025"
   },
   {
     "id": 46,
@@ -501,9 +501,9 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/125s",
-    "iso": "ISO 1600",
-    "year": "2024"
+    "shutter": "1/800s",
+    "iso": "ISO 200",
+    "year": "2025"
   },
   {
     "id": 47,
@@ -511,10 +511,10 @@
     "title": "Untitled — Frame 47",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/125s",
-    "iso": "ISO 1600",
-    "year": "2024"
+    "aperture": "ƒ/5.6",
+    "shutter": "1/800s",
+    "iso": "ISO 250",
+    "year": "2025"
   },
   {
     "id": 48,
@@ -523,9 +523,9 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/4.5",
-    "shutter": "1/60s",
-    "iso": "ISO 800",
-    "year": "2024"
+    "shutter": "1/2000s",
+    "iso": "ISO 200",
+    "year": "2025"
   },
   {
     "id": 49,
@@ -533,9 +533,9 @@
     "title": "Untitled — Frame 49",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/4000s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/9",
+    "shutter": "1/200s",
+    "iso": "ISO 100",
     "year": "2025"
   },
   {
@@ -544,9 +544,9 @@
     "title": "Untitled — Frame 50",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/4000s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/10",
+    "shutter": "1/250s",
+    "iso": "ISO 100",
     "year": "2025"
   },
   {
@@ -555,9 +555,9 @@
     "title": "Untitled — Frame 51",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/4000s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/7.1",
+    "shutter": "1/100s",
+    "iso": "ISO 100",
     "year": "2025"
   },
   {
@@ -566,9 +566,9 @@
     "title": "Untitled — Frame 52",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/1000s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/160s",
+    "iso": "ISO 800",
     "year": "2025"
   },
   {
@@ -577,9 +577,9 @@
     "title": "Untitled — Frame 53",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/1000s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/5.6",
+    "shutter": "1/160s",
+    "iso": "ISO 800",
     "year": "2025"
   },
   {
@@ -589,8 +589,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/1000s",
-    "iso": "ISO 1600",
+    "shutter": "1/160s",
+    "iso": "ISO 800",
     "year": "2025"
   },
   {
@@ -600,8 +600,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5",
-    "shutter": "1/4000s",
-    "iso": "ISO 1600",
+    "shutter": "1/160s",
+    "iso": "ISO 800",
     "year": "2025"
   },
   {
@@ -610,9 +610,9 @@
     "title": "Untitled — Frame 56",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/4000s",
-    "iso": "ISO 1600",
+    "aperture": "ƒ/9",
+    "shutter": "1/200s",
+    "iso": "ISO 400",
     "year": "2025"
   },
   {
@@ -621,9 +621,9 @@
     "title": "Untitled — Frame 57",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/320s",
-    "iso": "ISO 400",
+    "aperture": "ƒ/4.5",
+    "shutter": "1/200s",
+    "iso": "ISO 1600",
     "year": "2025"
   },
   {
@@ -633,8 +633,8 @@
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
     "aperture": "ƒ/5.6",
-    "shutter": "1/320s",
-    "iso": "ISO 400",
+    "shutter": "1/200s",
+    "iso": "ISO 800",
     "year": "2025"
   },
   {
@@ -643,202 +643,15 @@
     "title": "Untitled — Frame 59",
     "camera": "Canon Canon EOS 1200D",
     "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/800s",
-    "iso": "ISO 100",
+    "aperture": "ƒ/4.5",
+    "shutter": "1/200s",
+    "iso": "ISO 800",
     "year": "2025"
   },
   {
     "id": 60,
     "img": "/photos/frame-60.jpg",
     "title": "Untitled — Frame 60",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/800s",
-    "iso": "ISO 200",
-    "year": "2025"
-  },
-  {
-    "id": 61,
-    "img": "/photos/frame-61.jpg",
-    "title": "Untitled — Frame 61",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/800s",
-    "iso": "ISO 250",
-    "year": "2025"
-  },
-  {
-    "id": 62,
-    "img": "/photos/frame-62.jpg",
-    "title": "Untitled — Frame 62",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/4.5",
-    "shutter": "1/2000s",
-    "iso": "ISO 200",
-    "year": "2025"
-  },
-  {
-    "id": 63,
-    "img": "/photos/frame-63.jpg",
-    "title": "Untitled — Frame 63",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/9",
-    "shutter": "1/200s",
-    "iso": "ISO 100",
-    "year": "2025"
-  },
-  {
-    "id": 64,
-    "img": "/photos/frame-64.jpg",
-    "title": "Untitled — Frame 64",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/10",
-    "shutter": "1/250s",
-    "iso": "ISO 100",
-    "year": "2025"
-  },
-  {
-    "id": 65,
-    "img": "/photos/frame-65.jpg",
-    "title": "Untitled — Frame 65",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/7.1",
-    "shutter": "1/100s",
-    "iso": "ISO 100",
-    "year": "2025"
-  },
-  {
-    "id": 66,
-    "img": "/photos/frame-66.jpg",
-    "title": "Untitled — Frame 66",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/7.1",
-    "shutter": "1/100s",
-    "iso": "ISO 100",
-    "year": "2025"
-  },
-  {
-    "id": 67,
-    "img": "/photos/frame-67.jpg",
-    "title": "Untitled — Frame 67",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/160s",
-    "iso": "ISO 800",
-    "year": "2025"
-  },
-  {
-    "id": 68,
-    "img": "/photos/frame-68.jpg",
-    "title": "Untitled — Frame 68",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/160s",
-    "iso": "ISO 800",
-    "year": "2025"
-  },
-  {
-    "id": 69,
-    "img": "/photos/frame-69.jpg",
-    "title": "Untitled — Frame 69",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/160s",
-    "iso": "ISO 800",
-    "year": "2025"
-  },
-  {
-    "id": 70,
-    "img": "/photos/frame-70.jpg",
-    "title": "Untitled — Frame 70",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/160s",
-    "iso": "ISO 800",
-    "year": "2025"
-  },
-  {
-    "id": 71,
-    "img": "/photos/frame-71.jpg",
-    "title": "Untitled — Frame 71",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5",
-    "shutter": "1/160s",
-    "iso": "ISO 800",
-    "year": "2025"
-  },
-  {
-    "id": 72,
-    "img": "/photos/frame-72.jpg",
-    "title": "Untitled — Frame 72",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/7.1",
-    "shutter": "1/125s",
-    "iso": "ISO 400",
-    "year": "2025"
-  },
-  {
-    "id": 73,
-    "img": "/photos/frame-73.jpg",
-    "title": "Untitled — Frame 73",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/9",
-    "shutter": "1/200s",
-    "iso": "ISO 400",
-    "year": "2025"
-  },
-  {
-    "id": 74,
-    "img": "/photos/frame-74.jpg",
-    "title": "Untitled — Frame 74",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/4.5",
-    "shutter": "1/200s",
-    "iso": "ISO 1600",
-    "year": "2025"
-  },
-  {
-    "id": 75,
-    "img": "/photos/frame-75.jpg",
-    "title": "Untitled — Frame 75",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/5.6",
-    "shutter": "1/200s",
-    "iso": "ISO 800",
-    "year": "2025"
-  },
-  {
-    "id": 76,
-    "img": "/photos/frame-76.jpg",
-    "title": "Untitled — Frame 76",
-    "camera": "Canon Canon EOS 1200D",
-    "lens": "EF-S18-55mm f/3.5-5.6 III",
-    "aperture": "ƒ/4.5",
-    "shutter": "1/200s",
-    "iso": "ISO 800",
-    "year": "2025"
-  },
-  {
-    "id": 77,
-    "img": "/photos/frame-77.jpg",
-    "title": "Untitled — Frame 77",
     "camera": "Canon EOS 1200D",
     "lens": "18-55mm kit lens",
     "aperture": "Unknown",
