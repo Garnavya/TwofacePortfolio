@@ -265,9 +265,6 @@ function renderGallery(){
                   width: 100%; 
                   height: auto; 
                   display: block;">
-      <div class="mi-overlay">
-        <span class="mi-label">${photo.location} · ${photo.year}</span>
-      </div>
     `;
     
     item.addEventListener('click', () => openLightbox(photo));
@@ -284,17 +281,16 @@ const lbClose = document.getElementById('lbClose');
 
 function openLightbox(photo){
   if (!lightbox) return;
-  lbImage.style.background = photo.img ? `url(${photo.img}) center/cover` : photo.bg;
+  lbImage.style.background = photo.img ? `url(${photo.img}) center/contain no-repeat` : photo.bg;
+  // Simplified output
   lbInfo.innerHTML = `
-    <div class="ec-title">${photo.title}</div>
-    <div class="ec-row"><span class="ec-k">Camera</span><span class="ec-v">${photo.camera}</span></div>
-    <div class="ec-row"><span class="ec-k">Lens</span><span class="ec-v">${photo.lens}</span></div>
-    <div class="ec-row"><span class="ec-k">Aperture</span><span class="ec-v">${photo.aperture}</span></div>
-    <div class="ec-row"><span class="ec-k">Shutter</span><span class="ec-v">${photo.shutter}</span></div>
-    <div class="ec-row"><span class="ec-k">ISO</span><span class="ec-v">${photo.iso}</span></div>
-    <div class="ec-row"><span class="ec-k">Location</span><span class="ec-v">${photo.location}</span></div>
-    <div class="ec-row"><span class="ec-k">Date</span><span class="ec-v">${photo.year}</span></div>
-    <p class="ec-story">${photo.story}</p>
+    <div class="lb-exif-grid">
+      <div class="lb-row"><span class="lb-k">Camera</span><span class="lb-v">${photo.camera}</span></div>
+      <div class="lb-row"><span class="lb-k">Lens</span><span class="lb-v">${photo.lens}</span></div>
+      <div class="lb-row"><span class="lb-k">Aperture</span><span class="lb-v">${photo.aperture}</span></div>
+      <div class="lb-row"><span class="lb-k">Shutter</span><span class="lb-v">${photo.shutter}</span></div>
+      <div class="lb-row"><span class="lb-k">ISO</span><span class="lb-v">${photo.iso}</span></div>
+    </div>
   `;
   lightbox.classList.add('visible');
 }
