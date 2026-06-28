@@ -21,6 +21,20 @@ const langColors = {
   Python: '#3572A5'
 };
 
+// Helper for timeout-bound fetch requests
+const fetchWithTimeout = async (url, options = {}, timeout = 8000) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+};
+
 const router = Router();
 
 router.get('/health', (req, res) => {
@@ -39,9 +53,9 @@ router.get('/github/activity', async (req, res) => {
       headers['Authorization'] = `token ${config.githubToken}`;
     }
 
-    // 1. Fetch 6 most recently pushed repos
-    const reposRes = await fetch(
-      `https://api.github.com/users/${config.githubUsername}/repos?sort=pushed&per_page=6`,
+    // 1. Fetch 3 most recently pushed repos
+    const reposRes = await fetchWithTimeout(
+      `https://api.github.com/users/${config.githubUsername}/repos?sort=pushed&per_page=3`,
       { headers }
     );
     
@@ -53,7 +67,7 @@ router.get('/github/activity', async (req, res) => {
       let commits = [];
       
       try {
-        const commitsRes = await fetch(
+        const commitsRes = await fetchWithTimeout(
           `https://api.github.com/repos/${config.githubUsername}/${repo.name}/commits?per_page=2`,
           { headers }
         );

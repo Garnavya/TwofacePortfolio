@@ -28,8 +28,14 @@
     });
     toRemove.forEach(node => el.removeChild(node));
 
+    // Ensure screen readers read the clean, original text once
+    if (!el.hasAttribute('aria-label')) {
+      el.setAttribute('aria-label', trimmed);
+    }
+
     const base = document.createElement('span');
     base.className = 'glitch-base';
+    base.setAttribute('aria-hidden', 'true'); // Hide the complex visual nodes
     base.textContent = trimmed;
 
     const layerA = document.createElement('span');
@@ -92,26 +98,12 @@
       console.log("📥 [DIAGNOSTIC] Received response status:", res.status, res.statusText);
       
       if (res.status === 404) {
-        console.error(`
-❌ ERROR 404: Route Not Found!
-----------------------------------
-WHAT THIS MEANS: The frontend asked for /api/github/activity, but the server said "I don't know what that is."
-HOW TO FIX IT: 
-1. Did you restart your server? (Press Ctrl+C in the terminal, then run 'npm run dev' again).
-2. Did you paste the route into 'server/routes/api.js' correctly, before the 'export default router;' line?
-        `);
+        console.error;
         throw new Error("Route not found (404)");
       }
       
       if (res.status === 500) {
-        console.error(`
-❌ ERROR 500: Internal Server Error!
-----------------------------------
-WHAT THIS MEANS: The route exists, but the backend script crashed while trying to talk to GitHub.
-HOW TO FIX IT: 
-1. Check your .env file. Is GITHUB_TOKEN formatted correctly? (No quotes around the token).
-2. Check your SERVER terminal (where npm run dev is running). It will have a log starting with "GitHub Activity Error:" telling you why it crashed.
-        `);
+        console.error;
         throw new Error("Server error (500)");
       }
       
@@ -129,7 +121,7 @@ HOW TO FIX IT:
 🚨 FETCH FAILED ENTIRELY!
 ----------------------------------
 Error: ${err.message}
-WHAT THIS MEANS: The browser couldn't even make the request, or a network error occurred. Is your server running?
+The browser couldn't even make the request, or a network error occurred. Is your server running?
       `);
       throw err;
     }
@@ -145,8 +137,8 @@ WHAT THIS MEANS: The browser couldn't even make the request, or a network error 
 
     // Generates identical structure to code.js IIFE for native CSS hookup
     const createGlitchHTML = (text) => `
-      <span class="glitch-host glitch-active">
-        <span class="glitch-base">~/garnavya/${text}
+      <span class="glitch-host glitch-active" aria-label="~/garnavya/${text}">
+        <span class="glitch-base" aria-hidden="true">~/garnavya/${text}
           <span class="glitch-layer layer-a" aria-hidden="true">~/garnavya/${text}</span>
           <span class="glitch-layer layer-b" aria-hidden="true">~/garnavya/${text}</span>
         </span>

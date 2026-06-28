@@ -1,19 +1,5 @@
 gsap.registerPlugin(ScrollTrigger);
 
-/* =========================================================
-   PHOTO POOL — 45 placeholder entries with fake metadata.
-   Replace `img` with a real photo URL and fill in the rest
-   when ready. Each entry also gets a random aspect ratio so
-   the gallery masonry looks realistic.
-   ========================================================= */
-const LOCATIONS = ['Lucknow','Varanasi','Agra','Delhi','Goa','Jaipur','Himalayas','Kanpur'];
-const TAGS = ['portrait','street','landscape','golden hour','b&w','candid','architecture','nature'];
-const YEARS = ['2023','2024','2025','2026'];
-const LENSES = ['18-55mm kit lens','50mm f/1.8','EF-S 55-250mm'];
-const APERTURES = ['ƒ/1.8','ƒ/2.8','ƒ/4','ƒ/5.6','ƒ/8'];
-const SHUTTERS = ['1/60s','1/125s','1/250s','1/500s','1/1000s'];
-const ISOS = ['ISO 100','ISO 200','ISO 400','ISO 800'];
-
 function seededColor(seed){
   const hues = [28, 18, 40, 12, 34, 8, 46];
   const h = hues[seed % hues.length];
@@ -38,10 +24,9 @@ async function initPhotos() {
           bg: seededColor(i + 1),
           ratioW: ratio[0],
           ratioH: ratio[1],
-          // Provide fallbacks for UI fields not in EXIF
-          location: photo.location || LOCATIONS[i % LOCATIONS.length],
-          tag: photo.tag || TAGS[i % TAGS.length],
-          story: photo.story || 'A moment frozen in time.'
+          location: photo.location,
+          tag: photo.tag,
+          story: photo.story
         };
       });
     }
@@ -50,186 +35,8 @@ async function initPhotos() {
   }
 
   // Once data is loaded, build the UI
-  setupOrbitUI();
   renderGallery();
 }
-
-/* =========================================================
-   ORBIT — pick N photos per visit, shuffled w/o replacement
-   across visits (tracked in sessionStorage) so repeats are
-   minimized before the pool is exhausted.
-   ========================================================= */
-const ORBIT_COUNT = 10;
-
-function getOrbitSelection(){
-  const STORE_KEY = 'snap_orbit_remaining';
-  let remaining;
-  try {
-    remaining = JSON.parse(sessionStorage.getItem(STORE_KEY) || 'null');
-  } catch(e) { remaining = null; }
-
-  if (!remaining || !Array.isArray(remaining) || remaining.length === 0) {
-    remaining = PHOTO_POOL.map(p => p.id);
-    for (let i = remaining.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
-    }
-  }
-
-  const selectedIds = remaining.splice(0, ORBIT_COUNT);
-  try { sessionStorage.setItem(STORE_KEY, JSON.stringify(remaining)); } catch(e) {}
-
-  return selectedIds.map(id => PHOTO_POOL.find(p => p.id === id));
-}
-
-function setupOrbitUI() {
-  const orbitSet = getOrbitSelection();
-  const orbitContainer = document.getElementById('orbitContainer');
-  orbitContainer.innerHTML = ''; // clear it out just in case
-
-  orbitSet.forEach((photo, i) => {
-    const ph = document.createElement('div');
-    ph.className = 'orbit-photo';
-    ph.dataset.index = i;
-    ph.style.background = photo.img ? `url(${photo.img}) center/cover` : photo.bg;
-    ph.innerHTML = `<span class="ph-frame-no">${String(i+1).padStart(2,'0')}</span>`;
-    orbitContainer.appendChild(ph);
-
-    const card = document.createElement('div');
-    card.className = 'exif-card';
-    card.dataset.index = i;
-    card.innerHTML = `
-      <button class="ec-close">×</button>
-      <div class="ec-title">${photo.title}</div>
-      <div class="ec-row"><span class="ec-k">Camera</span><span class="ec-v">${photo.camera}</span></div>
-      <div class="ec-row"><span class="ec-k">Lens</span><span class="ec-v">${photo.lens}</span></div>
-      <div class="ec-row"><span class="ec-k">Aperture</span><span class="ec-v">${photo.aperture}</span></div>
-      <div class="ec-row"><span class="ec-k">Shutter</span><span class="ec-v">${photo.shutter}</span></div>
-      <div class="ec-row"><span class="ec-k">ISO</span><span class="ec-v">${photo.iso}</span></div>
-      <div class="ec-row"><span class="ec-k">Location</span><span class="ec-v">${photo.location}</span></div>
-      <div class="ec-row"><span class="ec-k">Date</span><span class="ec-v">${photo.year}</span></div>
-      <p class="ec-story">${photo.story}</p>
-    `;
-    orbitContainer.appendChild(card);
-  });
-}
-
-/* =========================================================
-   CSS 3D CAMERA — auto-rotate + drag override
-   ========================================================= */
-const camera3d = document.getElementById('camera-3d');
-const dragHint = document.getElementById('dragHint');
-
-let rotY = -20, rotX = -8;
-let autoRotating = true;
-const autoSpeed = 0.12;
-let isDragging = false, lastX = 0, lastY = 0, dragTimeout = null;
-
-// NEW: Track orbit rotation and prevent premature execution
-let orbitOffset = 0; 
-let orbitReady = false; 
-
-function applyRotation(){ camera3d.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; }
-
-function tick(){
-  if (autoRotating && !isDragging) { rotY += autoSpeed; applyRotation(); }
-  
-  // Only animate the photos if the layout variables are fully loaded further down
-  if (orbitReady) {
-    orbitOffset += (autoSpeed * Math.PI / 180);
-    layoutOrbit();
-  }
-  
-  requestAnimationFrame(tick);
-}
-tick();
-
-function startDrag(x, y){
-  isDragging = true; autoRotating = false; lastX = x; lastY = y;
-  dragHint.style.opacity = '0'; clearTimeout(dragTimeout);
-}
-function moveDrag(x, y){
-  if (!isDragging) return;
-  const dx = x - lastX, dy = y - lastY;
-  rotY += dx * 0.4; rotX = Math.max(-60, Math.min(60, rotX - dy * 0.4));
-  lastX = x; lastY = y; applyRotation();
-}
-function endDrag(){
-  isDragging = false;
-  dragTimeout = setTimeout(() => { autoRotating = true; dragHint.style.opacity = '0.85'; }, 2200);
-}
-
-camera3d.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
-window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
-window.addEventListener('mouseup', endDrag);
-camera3d.addEventListener('touchstart', (e) => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); }, { passive: true });
-window.addEventListener('touchmove', (e) => { if (!isDragging) return; const t = e.touches[0]; moveDrag(t.clientX, t.clientY); }, { passive: true });
-window.addEventListener('touchend', endDrag);
-
-/* =========================================================
-   ORBIT LAYOUT — position photos + dock cards
-   ========================================================= */
-const orbitScene = document.getElementById('camera-orbit-scene');
-
-function layoutOrbit(){
-  const photos = Array.from(document.querySelectorAll('.orbit-photo'));
-  const cards = Array.from(document.querySelectorAll('.exif-card'));
-  const rect = orbitScene.getBoundingClientRect();
-  const cx = rect.width / 2, cy = rect.height / 2;
-  const isMobile = rect.width < 760;
-  const radius = Math.min(rect.width, rect.height) * (isMobile ? 0.42 : 0.40);
-
-  photos.forEach((photo, i) => {
-    // Add the globally tracked orbitOffset to the angle
-    const angle = (i / photos.length) * Math.PI * 2 - Math.PI / 2 + orbitOffset;
-    
-    const x = cx + radius * Math.cos(angle);
-    const y = cy + radius * Math.sin(angle) * 0.62;
-    photo.style.left = x + 'px';
-    photo.style.top = y + 'px';
-
-    const card = cards[i];
-    if (card) {
-      const cardRadius = radius + (isMobile ? 70 : 130);
-      const cx2 = cx + cardRadius * Math.cos(angle);
-      const cy2 = cy + cardRadius * Math.sin(angle) * 0.62;
-      const cardW = isMobile ? 190 : 250;
-      const cardH = isMobile ? 220 : 240;
-      const clampedX = Math.max(8, Math.min(rect.width - cardW - 8, cx2 - cardW/2));
-      const clampedY = Math.max(8, Math.min(rect.height - cardH - 8, cy2 - cardH/2));
-      card.style.left = clampedX + 'px';
-      card.style.top = clampedY + 'px';
-    }
-  });
-}
-layoutOrbit();
-orbitReady = true; // Tell tick() it is now safe to animate
-window.addEventListener('resize', layoutOrbit);
-
-let activeCardIndex = null;
-function closeAllCards(){
-  document.querySelectorAll('.exif-card').forEach(c => c.classList.remove('visible'));
-  document.querySelectorAll('.orbit-photo').forEach(p => p.classList.remove('active'));
-  activeCardIndex = null;
-}
-orbitContainer.addEventListener('click', (e) => {
-  const photo = e.target.closest('.orbit-photo');
-  const closeBtn = e.target.closest('.ec-close');
-  if (closeBtn) { e.stopPropagation(); closeAllCards(); return; }
-  if (!photo) return;
-  e.stopPropagation();
-  const idx = photo.dataset.index;
-  const card = document.querySelector(`.exif-card[data-index="${idx}"]`);
-  if (!card) return;
-  if (activeCardIndex === idx) { closeAllCards(); return; }
-  closeAllCards();
-  card.classList.add('visible');
-  photo.classList.add('active');
-  activeCardIndex = idx;
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.orbit-photo') && !e.target.closest('.exif-card')) closeAllCards();
-});
 
 /* =========================================================
    PINTEREST GALLERY — pure native masonry + lightbox
@@ -260,7 +67,6 @@ function renderGallery(){
     // No object-fit, no forced aspect-ratios. 
     item.innerHTML = `
       <img class="mi-fill" src="${photo.img}" alt="${photo.title}" 
-           onerror="this.closest('.masonry-item').style.display='none'"
            style="background: ${photo.bg}; 
                   width: 100%; 
                   height: auto; 
