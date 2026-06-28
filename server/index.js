@@ -16,11 +16,17 @@ if (config.nodeEnv === 'production') {
   app.use(express.static(distPath));
 }
 
-app.listen(config.port, () => {
-  console.log(`Express server listening on http://localhost:${config.port}`);
-  if (config.nodeEnv === 'production') {
-    console.log('Serving static files from /dist');
-  } else {
-    console.log('API only — frontend served by Vite dev server');
-  }
-});
+// Only start the server if we are NOT running on Vercel
+if (!process.env.VERCEL) {
+  app.listen(config.port, () => {
+    console.log(`Express server listening on http://localhost:${config.port}`);
+    if (config.nodeEnv === 'production') {
+      console.log('Serving static files from /dist');
+    } else {
+      console.log('API only — frontend served by Vite dev server');
+    }
+  });
+}
+
+// Export the app so Vercel can use it as a serverless function
+export default app;
