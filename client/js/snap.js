@@ -218,94 +218,57 @@ document.addEventListener('click', (e) => {
 });
 
 /* =========================================================
-   PINTEREST GALLERY — masonry + filters + search + lightbox
+   PINTEREST GALLERY — pure native masonry + lightbox
    ========================================================= */
 const masonryGrid = document.getElementById('masonryGrid');
 const masonryEmpty = document.getElementById('masonryEmpty');
 const galleryCount = document.getElementById('galleryCount');
-const filterYearEl = document.getElementById('filterYear');
-const filterTagEl = document.getElementById('filterTag');
-const gallerySearch = document.getElementById('gallerySearch');
-
-let activeYear = 'all';
-let activeTag = 'all';
-
-function buildFilterChips(container, values, onSelect){
-  const allChip = document.createElement('div');
-  allChip.className = 'filter-chip active';
-  allChip.textContent = 'All';
-  allChip.addEventListener('click', () => onSelect('all'));
-  container.appendChild(allChip);
-
-  values.forEach(v => {
-    const chip = document.createElement('div');
-    chip.className = 'filter-chip';
-    chip.textContent = v;
-    chip.addEventListener('click', () => onSelect(v));
-    container.appendChild(chip);
-  });
-}
-
-function refreshChipStates(container, activeVal){
-  Array.from(container.children).forEach(chip => {
-    const isAll = chip.textContent === 'All';
-    chip.classList.toggle('active', (isAll && activeVal === 'all') || chip.textContent === activeVal);
-  });
-}
-
-buildFilterChips(filterYearEl, YEARS, (v) => { activeYear = v; refreshChipStates(filterYearEl, v); renderGallery(); });
-buildFilterChips(filterTagEl, TAGS, (v) => { activeTag = v; refreshChipStates(filterTagEl, v); renderGallery(); });
-
-gallerySearch.addEventListener('input', renderGallery);
 
 function renderGallery(){
-  const query = gallerySearch.value.trim().toLowerCase();
-  const filtered = PHOTO_POOL.filter(p => {
-    if (activeYear !== 'all' && p.year !== activeYear) return false;
-    if (activeTag !== 'all' && p.tag !== activeTag) return false;
-    if (query) {
-      const haystack = `${p.tag} ${p.location} ${p.year} ${p.title}`.toLowerCase();
-      if (!haystack.includes(query)) return false;
-    }
-    return true;
-  });
-
+  if (!masonryGrid) return;
   masonryGrid.innerHTML = '';
-  masonryEmpty.style.display = filtered.length === 0 ? 'block' : 'none';
-  galleryCount.textContent = `${filtered.length} of ${PHOTO_POOL.length} frames`;
+  
+  if (masonryEmpty) {
+    masonryEmpty.style.display = PHOTO_POOL.length === 0 ? 'block' : 'none';
+  }
+  
+  if (galleryCount) {
+    galleryCount.textContent = `${PHOTO_POOL.length} frames`;
+  }
 
-  filtered.forEach(photo => {
+  PHOTO_POOL.forEach(photo => {
     const item = document.createElement('div');
     item.className = 'masonry-item';
     
-    // Default fallback ratio before image loads
+    // Pure native rendering. 
+    // width: 100% makes it fit the column.
+    // height: auto lets the browser calculate the exact natural height of the photo file.
+    // No object-fit, no forced aspect-ratios. 
     item.innerHTML = `
-      <div class="mi-fill" style="background:${photo.img ? `url(${photo.img}) center/cover` : photo.bg}; padding-bottom:100%;"></div>
-      <div class="mi-overlay"><span class="mi-label">${photo.location} · ${photo.year}</span></div>
+      <img class="mi-fill" src="${photo.img}" alt="${photo.title}" 
+           style="background: ${photo.bg}; 
+                  width: 100%; 
+                  height: auto; 
+                  display: block;">
+      <div class="mi-overlay">
+        <span class="mi-label">${photo.location} · ${photo.year}</span>
+      </div>
     `;
+    
     item.addEventListener('click', () => openLightbox(photo));
     masonryGrid.appendChild(item);
-
-    // Load actual image dimensions asynchronously
-    if (photo.img) {
-      const img = new Image();
-      img.onload = () => {
-        const trueHeightPct = (img.naturalHeight / img.naturalWidth) * 100;
-        const fill = item.querySelector('.mi-fill');
-        if (fill) fill.style.paddingBottom = `${trueHeightPct}%`;
-      };
-      img.src = photo.img;
-    }
   });
 }
 renderGallery();
 
+// --- Lightbox Logic ---
 const lightbox = document.getElementById('lightbox');
 const lbImage = document.getElementById('lbImage');
 const lbInfo = document.getElementById('lbInfo');
 const lbClose = document.getElementById('lbClose');
 
 function openLightbox(photo){
+  if (!lightbox) return;
   lbImage.style.background = photo.img ? `url(${photo.img}) center/cover` : photo.bg;
   lbInfo.innerHTML = `
     <div class="ec-title">${photo.title}</div>
@@ -320,9 +283,10 @@ function openLightbox(photo){
   `;
   lightbox.classList.add('visible');
 }
-lbClose.addEventListener('click', () => lightbox.classList.remove('visible'));
-lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('visible'); });
-window.addEventListener('keydown', (e) => { if (e.key === 'Escape') lightbox.classList.remove('visible'); });
+
+if (lbClose) lbClose.addEventListener('click', () => lightbox.classList.remove('visible'));
+if (lightbox) lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('visible'); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox) lightbox.classList.remove('visible'); });
 
 /* =========================================================
    APERTURE TRANSITION — a real iris diaphragm.
