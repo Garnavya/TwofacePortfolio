@@ -111,10 +111,21 @@ let autoRotating = true;
 const autoSpeed = 0.12;
 let isDragging = false, lastX = 0, lastY = 0, dragTimeout = null;
 
+// NEW: Track orbit rotation and prevent premature execution
+let orbitOffset = 0; 
+let orbitReady = false; 
+
 function applyRotation(){ camera3d.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; }
 
 function tick(){
   if (autoRotating && !isDragging) { rotY += autoSpeed; applyRotation(); }
+  
+  // Only animate the photos if the layout variables are fully loaded further down
+  if (orbitReady) {
+    orbitOffset += (autoSpeed * Math.PI / 180);
+    layoutOrbit();
+  }
+  
   requestAnimationFrame(tick);
 }
 tick();
@@ -155,7 +166,9 @@ function layoutOrbit(){
   const radius = Math.min(rect.width, rect.height) * (isMobile ? 0.42 : 0.40);
 
   photos.forEach((photo, i) => {
-    const angle = (i / photos.length) * Math.PI * 2 - Math.PI / 2;
+    // Add the globally tracked orbitOffset to the angle
+    const angle = (i / photos.length) * Math.PI * 2 - Math.PI / 2 + orbitOffset;
+    
     const x = cx + radius * Math.cos(angle);
     const y = cy + radius * Math.sin(angle) * 0.62;
     photo.style.left = x + 'px';
@@ -176,6 +189,7 @@ function layoutOrbit(){
   });
 }
 layoutOrbit();
+orbitReady = true; // Tell tick() it is now safe to animate
 window.addEventListener('resize', layoutOrbit);
 
 let activeCardIndex = null;
@@ -263,13 +277,25 @@ function renderGallery(){
   filtered.forEach(photo => {
     const item = document.createElement('div');
     item.className = 'masonry-item';
-    const heightPct = (photo.ratioH / photo.ratioW) * 100;
+    
+    // Default fallback ratio before image loads
     item.innerHTML = `
-      <div class="mi-fill" style="background:${photo.img ? `url(${photo.img}) center/cover` : photo.bg}; padding-bottom:${heightPct}%;"></div>
+      <div class="mi-fill" style="background:${photo.img ? `url(${photo.img}) center/cover` : photo.bg}; padding-bottom:100%;"></div>
       <div class="mi-overlay"><span class="mi-label">${photo.location} · ${photo.year}</span></div>
     `;
     item.addEventListener('click', () => openLightbox(photo));
     masonryGrid.appendChild(item);
+
+    // Load actual image dimensions asynchronously
+    if (photo.img) {
+      const img = new Image();
+      img.onload = () => {
+        const trueHeightPct = (img.naturalHeight / img.naturalWidth) * 100;
+        const fill = item.querySelector('.mi-fill');
+        if (fill) fill.style.paddingBottom = `${trueHeightPct}%`;
+      };
+      img.src = photo.img;
+    }
   });
 }
 renderGallery();
@@ -411,3 +437,51 @@ zones.forEach((zone, i) => {
     onEnterBack: () => playApertureCycle(),
   });
 });
+
+/* =========================================================
+   CINEMATIC DUST MOTES — GSAP Background (Falling)
+   ========================================================= */
+function initDustMotes() {
+  const container = document.getElementById('dust-container');
+  if (!container) return;
+
+  const moteCount = 40;
+
+  for (let i = 0; i < moteCount; i++) {
+    const mote = document.createElement('div');
+    mote.className = 'dust-mote';
+    
+    const size = Math.random() * 6 + 2; 
+    mote.style.width = `${size}px`;
+    mote.style.height = `${size}px`;
+    mote.style.boxShadow = '0 0 4px rgba(138, 90, 31, 0.3)';
+    mote.style.left = '0px';
+    mote.style.top = '0px';
+    container.appendChild(mote);
+
+    function drift() {
+      // Reset above screen with a new random X
+      gsap.set(mote, {
+        x: Math.random() * window.innerWidth,
+        y: -30, 
+        opacity: 0
+      });
+
+      const duration = Math.random() * 15 + 15; // Slow drift: 15 to 30 seconds
+
+      gsap.timeline({ onComplete: drift })
+        .to(mote, {
+          y: window.innerHeight + 50,
+          x: `+=${(Math.random() - 0.5) * 300}`, // Sway left/right organically while falling
+          rotation: Math.random() * 360,
+          ease: 'none',
+          duration: duration
+        })
+        .to(mote, { opacity: Math.random() * 0.6 + 0.2, duration: duration * 0.3, ease: 'power1.out' }, 0)
+        .to(mote, { opacity: 0, duration: duration * 0.4, ease: 'power1.in' }, duration * 0.6);
+    }
+
+    setTimeout(drift, Math.random() * 15000);
+  }
+}
+initDustMotes();

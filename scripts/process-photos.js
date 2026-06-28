@@ -1,56 +1,39 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import sharp from 'sharp';
+import fs from 'fs';
+import path from 'path';
+import exifr from 'exifr';
+import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rawDir = path.resolve(__dirname, '../raw-photos');
-const outDir = path.resolve(__dirname, '../client/public/photos');
+const photosDir = path.join(__dirname, '../client/public/photos');
+const outputFilePath = path.join(__dirname, '../client/public/photos/metadata.json');
 
 async function processPhotos() {
-  try {
-    // Ensure the output directory exists
-    await fs.mkdir(outDir, { recursive: true });
+  const files = fs.readdirSync(photosDir).filter(f => f.endsWith('.jpg') || f.endsWith('.jpeg'));
+  const metadataArray = [];
 
-    // Read all files from the raw folder
-    const files = await fs.readdir(rawDir);
-    
-    // Filter for common image formats (ignores hidden files like .DS_Store)
-    const imageFiles = files.filter(f => /\.(jpe?g|png|webp|heic)$/i.test(f));
-
-    if (imageFiles.length === 0) {
-      console.log('No images found in raw-photos/');
-      return;
-    }
-
-    // Sort files alphabetically so the numbering is predictable
-    imageFiles.sort();
-
-    console.log(`Found ${imageFiles.length} photos. Processing...`);
-
-    // Loop through and process each file
-    for (let i = 0; i < imageFiles.length; i++) {
-      const file = imageFiles[i];
-      const inputPath = path.join(rawDir, file);
+  for (const file of files) {
+    const filePath = path.join(photosDir, file);
+    try {
+      // Extract only the specific EXIF blocks we need
+      const exif = await exifr.parse(filePath, ['Make', 'Model', 'LensModel', 'FNumber', 'ExposureTime', 'ISO', 'DateTimeOriginal']);
       
-      // Generate the "frame-XX" name (e.g., 1 -> 01, 15 -> 15)
-      const id = String(i + 1).padStart(2, '0');
-      const outputName = `frame-${id}.jpg`;
-      const outputPath = path.join(outDir, outputName);
-
-      // Resize, convert to JPEG, and save
-      await sharp(inputPath)
-        .resize({ width: 1600, withoutEnlargement: true }) // Shrinks large photos, leaves small ones alone
-        .jpeg({ quality: 80 })
-        .toFile(outputPath);
-
-      console.log(`✅ ${file}  -->  ${outputName}`);
+      metadataArray.push({
+        img: `/photos/${file}`,
+        camera: exif?.Model ? `${exif.Make} ${exif.Model}` : 'Canon EOS 1200D',
+        lens: exif?.LensModel || '18-55mm kit lens',
+        aperture: exif?.FNumber ? `ƒ/${exif.FNumber}` : 'Unknown',
+        shutter: exif?.ExposureTime ? `1/${Math.round(1/exif.ExposureTime)}s` : 'Unknown',
+        iso: exif?.ISO ? `ISO ${exif.ISO}` : 'Unknown',
+        year: exif?.DateTimeOriginal ? new Date(exif.DateTimeOriginal).getFullYear().toString() : '2025'
+      });
+      console.log(`Processed: ${file}`);
+    } catch (err) {
+      console.error(`Error processing ${file}:`, err.message);
     }
-
-    console.log('\n🎉 All photos optimized and renamed successfully!');
-  } catch (error) {
-    console.error('❌ Error processing photos:', error);
   }
+
+  fs.writeFileSync(outputFilePath, JSON.stringify(metadataArray, null, 2));
+  console.log(`\nSuccess! Wrote metadata for ${metadataArray.length} photos to metadata.json`);
 }
 
 processPhotos();

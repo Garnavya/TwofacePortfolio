@@ -201,3 +201,54 @@ WHAT THIS MEANS: The browser couldn't even make the request, or a network error 
     if (errTpl) ghGrid.appendChild(errTpl.content.cloneNode(true));
   }
 })();
+
+/* =========================================================
+   ZERO-GRAVITY DATA NODES — GSAP Background (Falling)
+   ========================================================= */
+function initCyberNodes() {
+  const container = document.getElementById('cyber-particles');
+  if (!container) return;
+  
+  const chars = ['{', '}', ';', '/>', '0', '1', '[]', '()', '=>'];
+  const nodeCount = 45; // Increased slightly for better spread
+  
+  for (let i = 0; i < nodeCount; i++) {
+    const node = document.createElement('div');
+    node.className = 'cyber-node';
+    node.innerText = chars[Math.floor(Math.random() * chars.length)];
+    node.style.color = Math.random() > 0.6 ? 'var(--violet)' : 'var(--teal-dim)';
+    
+    // Clear out inline CSS layout so GSAP handles positioning purely
+    node.style.left = '0px';
+    node.style.top = '0px';
+    container.appendChild(node);
+
+    // Recursive function for continuous falling
+    function fall() {
+      // 1. Instantly reset particle above the screen at a random X coordinate
+      gsap.set(node, {
+        x: Math.random() * window.innerWidth,
+        y: -50,
+        opacity: 0,
+        scale: Math.random() * 0.5 + 0.7 // Slight size variation
+      });
+
+      const duration = Math.random() * 10 + 10; // Falls for 10 to 20 seconds
+
+      // 2. Animate it falling down
+      gsap.timeline({ onComplete: fall }) // When done, call fall() again!
+        .to(node, {
+          y: window.innerHeight + 50, // Drop below the bottom edge
+          ease: 'none',
+          duration: duration
+        })
+        // 3. Fade in quickly at the start, fade out slowly at the end
+        .to(node, { opacity: Math.random() * 0.5 + 0.1, duration: duration * 0.2, ease: 'power1.out' }, 0)
+        .to(node, { opacity: 0, duration: duration * 0.3, ease: 'power1.in' }, duration * 0.7);
+    }
+
+    // Start each particle with a random delay so they don't fall in a single clump
+    setTimeout(fall, Math.random() * 12000);
+  }
+}
+initCyberNodes();
