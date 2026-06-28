@@ -416,3 +416,28 @@ footer{
   #topbar{ padding:14px 16px; }
   .brand span.full{ display:none; }
 }
+
+/* ===== TERMINAL TRANSITION OVERLAY ===== */
+#terminal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100; /* Above topbar (50), below nothing else */
+  pointer-events: none;
+  opacity: 0;
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+}
+#terminal-content {
+  color: var(--teal);
+  font-family: var(--font-mono);
+  font-size: clamp(14px, 3vw, 18px);
+  line-height: 1.6;
+  font-weight: 500;
+}
+#terminal-content .term-highlight {
+  color: var(--violet); /* Reusing existing color for the success state */
+  font-weight: 700;
+}

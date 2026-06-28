@@ -17,6 +17,10 @@
 
 <div id="cyber-particles" style="position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden;"></div>
 
+<div id="terminal-overlay">
+  <div id="terminal-content"></div>
+</div>
+
 <div id="topbar">
   <div class="brand"><span class="dot"></span> garnavya<span class="full">.dev</span></div>
   <div id="modeToggle">
@@ -27,7 +31,7 @@
 
 <main>
 
-  <section id="hero">
+  <section id="hero" data-term-zone="true">
     <div class="winframe">
       <div class="winbar">
         <div class="tl"><span></span><span></span><span></span></div>
@@ -51,7 +55,7 @@
     </div>
   </section>
 
-  <section id="stack">
+  <section id="stack" data-term-zone="true">
     <div class="winframe">
       <div class="winbar">
         <div class="tl"><span></span><span></span><span></span></div>
@@ -72,7 +76,7 @@
     </div>
   </section>
 
-  <section id="projects">
+  <section id="projects" data-term-zone="true">
     <div class="winframe">
       <div class="winbar">
         <div class="tl"><span></span><span></span><span></span></div>
@@ -102,7 +106,7 @@
     </div>
   </section>
 
-  <section id="journey">
+  <section id="journey" data-term-zone="true">
     <div class="winframe">
       <div class="winbar">
         <div class="tl"><span></span><span></span><span></span></div>
@@ -137,7 +141,7 @@
     </div>
   </section>
 
-  <section id="github-activity">
+  <section id="github-activity" data-term-zone="true">
     <div class="winframe">
       <div class="winbar">
         <div class="tl"><span></span><span></span><span></span></div>
@@ -201,7 +205,7 @@
     </div>
   </template>
 
-  <section id="github-heatmap">
+  <section id="github-heatmap" data-term-zone="true">
     <div class="winframe">
       <div class="winbar">
         <div class="tl"><span></span><span></span><span></span></div>
@@ -231,7 +235,7 @@
     </div>
   </section>
 
-  <section id="contact">
+  <section id="contact" data-term-zone="true">
     <div class="winframe">
       <div class="winbar">
         <div class="tl"><span></span><span></span><span></span></div>
@@ -253,6 +257,7 @@
 
 <footer>© 2026 GARNAVYA — COMPILED, NOT TEMPLATED — <a href="snap.html" style="color:var(--teal-dim); text-decoration:none;">switch to SNAP →</a></footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="js/code.js" defer></script>
 <script src="js/github-calendar.js" defer></script>
 
