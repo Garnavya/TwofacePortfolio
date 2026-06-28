@@ -20,28 +20,39 @@ function seededColor(seed){
   return `linear-gradient(150deg, hsl(${h},45%,78%), hsl(${h+8},38%,58%))`;
 }
 
-const PHOTO_POOL = Array.from({ length: 77 }, (_, i) => {
-  const idx = i + 1;
-  const ratios = [ [4,5], [1,1], [3,4], [5,4], [4,3] ];
-  const ratio = ratios[i % ratios.length];
-  return {
-    id: idx,
-    img: `/photos/frame-${String(idx).padStart(2, '0')}.jpg`,
-    bg: seededColor(idx),
-    title: `Untitled — Frame ${String(idx).padStart(2,'0')}`,
-    camera: 'Canon EOS 1200D',
-    lens: LENSES[idx % LENSES.length],
-    aperture: APERTURES[idx % APERTURES.length],
-    shutter: SHUTTERS[idx % SHUTTERS.length],
-    iso: ISOS[idx % ISOS.length],
-    location: LOCATIONS[idx % LOCATIONS.length],
-    year: YEARS[idx % YEARS.length],
-    tag: TAGS[idx % TAGS.length],
-    story: 'Placeholder note — describe how and why this shot happened.',
-    ratioW: ratio[0],
-    ratioH: ratio[1],
-  };
-});
+let PHOTO_POOL = []; // Now a variable instead of a hardcoded constant
+
+// Create an async initializer to fetch your generated JSON
+async function initPhotos() {
+  try {
+    const res = await fetch('/photos/metadata.json');
+    if (res.ok) {
+      const data = await res.json();
+      const ratios = [ [4,5], [1,1], [3,4], [5,4], [4,3] ];
+      
+      // Map your real JSON data into the format the UI expects
+      PHOTO_POOL = data.map((photo, i) => {
+        const ratio = ratios[i % ratios.length];
+        return {
+          ...photo,
+          bg: seededColor(i + 1),
+          ratioW: ratio[0],
+          ratioH: ratio[1],
+          // Provide fallbacks for UI fields not in EXIF
+          location: photo.location || LOCATIONS[i % LOCATIONS.length],
+          tag: photo.tag || TAGS[i % TAGS.length],
+          story: photo.story || 'A moment frozen in time.'
+        };
+      });
+    }
+  } catch(e) {
+    console.warn("Could not load metadata.json. Gallery will be empty.", e);
+  }
+
+  // Once data is loaded, build the UI
+  setupOrbitUI();
+  renderGallery();
+}
 
 /* =========================================================
    ORBIT — pick N photos per visit, shuffled w/o replacement
@@ -71,34 +82,37 @@ function getOrbitSelection(){
   return selectedIds.map(id => PHOTO_POOL.find(p => p.id === id));
 }
 
-const orbitSet = getOrbitSelection();
+function setupOrbitUI() {
+  const orbitSet = getOrbitSelection();
+  const orbitContainer = document.getElementById('orbitContainer');
+  orbitContainer.innerHTML = ''; // clear it out just in case
 
-const orbitContainer = document.getElementById('orbitContainer');
-orbitSet.forEach((photo, i) => {
-  const ph = document.createElement('div');
-  ph.className = 'orbit-photo';
-  ph.dataset.index = i;
-  ph.style.background = photo.img ? `url(${photo.img}) center/cover` : photo.bg;
-  ph.innerHTML = `<span class="ph-frame-no">${String(i+1).padStart(2,'0')}</span>`;
-  orbitContainer.appendChild(ph);
+  orbitSet.forEach((photo, i) => {
+    const ph = document.createElement('div');
+    ph.className = 'orbit-photo';
+    ph.dataset.index = i;
+    ph.style.background = photo.img ? `url(${photo.img}) center/cover` : photo.bg;
+    ph.innerHTML = `<span class="ph-frame-no">${String(i+1).padStart(2,'0')}</span>`;
+    orbitContainer.appendChild(ph);
 
-  const card = document.createElement('div');
-  card.className = 'exif-card';
-  card.dataset.index = i;
-  card.innerHTML = `
-    <button class="ec-close">×</button>
-    <div class="ec-title">${photo.title}</div>
-    <div class="ec-row"><span class="ec-k">Camera</span><span class="ec-v">${photo.camera}</span></div>
-    <div class="ec-row"><span class="ec-k">Lens</span><span class="ec-v">${photo.lens}</span></div>
-    <div class="ec-row"><span class="ec-k">Aperture</span><span class="ec-v">${photo.aperture}</span></div>
-    <div class="ec-row"><span class="ec-k">Shutter</span><span class="ec-v">${photo.shutter}</span></div>
-    <div class="ec-row"><span class="ec-k">ISO</span><span class="ec-v">${photo.iso}</span></div>
-    <div class="ec-row"><span class="ec-k">Location</span><span class="ec-v">${photo.location}</span></div>
-    <div class="ec-row"><span class="ec-k">Date</span><span class="ec-v">${photo.year}</span></div>
-    <p class="ec-story">${photo.story}</p>
-  `;
-  orbitContainer.appendChild(card);
-});
+    const card = document.createElement('div');
+    card.className = 'exif-card';
+    card.dataset.index = i;
+    card.innerHTML = `
+      <button class="ec-close">×</button>
+      <div class="ec-title">${photo.title}</div>
+      <div class="ec-row"><span class="ec-k">Camera</span><span class="ec-v">${photo.camera}</span></div>
+      <div class="ec-row"><span class="ec-k">Lens</span><span class="ec-v">${photo.lens}</span></div>
+      <div class="ec-row"><span class="ec-k">Aperture</span><span class="ec-v">${photo.aperture}</span></div>
+      <div class="ec-row"><span class="ec-k">Shutter</span><span class="ec-v">${photo.shutter}</span></div>
+      <div class="ec-row"><span class="ec-k">ISO</span><span class="ec-v">${photo.iso}</span></div>
+      <div class="ec-row"><span class="ec-k">Location</span><span class="ec-v">${photo.location}</span></div>
+      <div class="ec-row"><span class="ec-k">Date</span><span class="ec-v">${photo.year}</span></div>
+      <p class="ec-story">${photo.story}</p>
+    `;
+    orbitContainer.appendChild(card);
+  });
+}
 
 /* =========================================================
    CSS 3D CAMERA — auto-rotate + drag override
@@ -246,6 +260,7 @@ function renderGallery(){
     // No object-fit, no forced aspect-ratios. 
     item.innerHTML = `
       <img class="mi-fill" src="${photo.img}" alt="${photo.title}" 
+           onerror="this.closest('.masonry-item').style.display='none'"
            style="background: ${photo.bg}; 
                   width: 100%; 
                   height: auto; 
@@ -449,3 +464,5 @@ function initDustMotes() {
   }
 }
 initDustMotes();
+
+initPhotos();
